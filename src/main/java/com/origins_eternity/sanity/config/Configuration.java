@@ -214,11 +214,6 @@ public class Configuration {
     }
 
     public static class ConfigOverlay {
-        @Config.Name("Brain Overlay")
-        @Config.LangKey("config.sanity.brain")
-        @Config.Comment("Whether to enable the brain overlay or not.")
-        public boolean brain = true;
-
         @Config.Name("Brain Overlay OffX")
         @Config.LangKey("config.sanity.offx")
         @Config.Comment("Offset on x of the brain overlay. A positive number means a shift to the right.")

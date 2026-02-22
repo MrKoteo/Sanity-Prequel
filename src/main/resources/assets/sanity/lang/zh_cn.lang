@@ -12,8 +12,6 @@ lingering_potion.effect.composure=滞留型镇定药水
 
 config.sanity.overlay=显示
 config.sanity.overlay.tooltip=显示配置
-config.sanity.brain=大脑图标显示
-config.sanity.brain.tooltip=是否启用大脑图标显示。
 config.sanity.offx=大脑图标水平偏移量
 config.sanity.offx.tooltip=大脑图标的水平偏移量。正数表示向右偏移。
 config.sanity.offy=大脑竖直偏移量

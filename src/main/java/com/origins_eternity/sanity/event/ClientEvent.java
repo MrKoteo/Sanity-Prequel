@@ -23,22 +23,28 @@ import static com.origins_eternity.sanity.content.sound.Sounds.INSANITY;
 import static com.origins_eternity.sanity.utils.Utils.isAwake;
 import static com.origins_eternity.sanity.utils.proxy.ClientProxy.mc;
 
-@Mod.EventBusSubscriber(modid = MOD_ID)
+@SideOnly(Side.CLIENT)
+@Mod.EventBusSubscriber(modid = MOD_ID, value = Side.CLIENT)
 public class ClientEvent {
     private static final Random rand = new Random();
 
-    static int sound;
-    static int whisper;
+    public static int up = 0;
+    public static int down = 0;
+    public static int glow = 0;
+    public static double value = -1;
     public static int flash = Overlay.flash;
+    private static int sound;
+    private static int whisper;
 
-    @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         EntityPlayer player = event.player;
         if (!player.isCreative() && !player.isSpectator() && player == mc().player) {
+            if (event.phase != TickEvent.Phase.END) return;
             ISanity sanity = player.getCapability(SANITY, null);
             if (!sanity.getEnable() || isAwake(player)) return;
-            if (sanity.getSanity() < Effect.sound) {
+            update(sanity);
+            if (value < Effect.sound) {
                 sound--;
                 if (sound <= 0) {
                     int number = rand.nextInt(Effect.sounds.length);
@@ -49,7 +55,7 @@ public class ClientEvent {
                     sound = rand.nextInt(600) + 800;
                 }
             }
-            if (sanity.getSanity() < Effect.whisper) {
+            if (value < Effect.whisper) {
                 whisper--;
                 ISound insanity = PositionedSoundRecord.getMasterRecord(INSANITY, 1f);
                 if (whisper <= 0) {
@@ -58,7 +64,7 @@ public class ClientEvent {
                 }
             }
             if (Overlay.flash != -1) {
-                if (sanity.getDown() >= 15 || sanity.getUp() >= 15) {
+                if (up > 0 || down > 0) {
                     flash = Overlay.flash * 20;
                 } else if (flash > 0) {
                     flash--;
@@ -75,7 +81,6 @@ public class ClientEvent {
     private static final int num2 = Integer.parseInt(Effect.level2.split(";")[1]);
     private static final int num3 = Integer.parseInt(Effect.level3.split(";")[1]);
 
-    @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public static void onRenderTick(TickEvent.RenderTickEvent event) {
         EntityPlayer player = mc().player;
@@ -110,5 +115,26 @@ public class ClientEvent {
             renderer.loadShader(new ResourceLocation(name));
             current = name;
         }
+    }
+
+    private static void update(ISanity sanity) {
+        if (value == -1) {
+            value = sanity.getSanity();
+            return;
+        }
+        if (up > 0) up--;
+        if (down > 0) down--;
+        if (glow > 0) glow--;
+        if (sanity.getSanity() < value && down == 0) {
+            down = 59;
+        } else if (sanity.getSanity() > value && up == 0) {
+            up = 59;
+        } else {
+            return;
+        }
+        if (Math.abs(sanity.getSanity() - value) >= 1.0) {
+            glow = 29;
+        }
+        value = sanity.getSanity();
     }
 }

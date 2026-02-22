@@ -9,11 +9,9 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 public class Sanity implements ISanity {
     private int max = 100;
 
+    private int coolDown = 0;
+
     private float sanity = 100;
-
-    private int down = 0;
-
-    private int up = 0;
 
     private boolean enable = true;
 
@@ -38,23 +36,18 @@ public class Sanity implements ISanity {
     }
 
     @Override
-    public void setDown(int down) {
-        this.down = Math.max(down, 0);
+    public int getCoolDown() {
+        return coolDown;
     }
 
     @Override
-    public int getDown() {
-        return down;
+    public void setCoolDown(int coolDown) {
+        this.coolDown = coolDown;
     }
 
     @Override
-    public void setUp(int up) {
-        this.up = Math.max(up, 0);
-    }
-
-    @Override
-    public int getUp() {
-        return up;
+    public void coolDown() {
+        coolDown -= 1;
     }
 
     @Override
@@ -71,12 +64,8 @@ public class Sanity implements ISanity {
     public void consumeSanity(double value) {
         if (value >= 0 && enable) {
             if (sanity > 0f) {
-                if (value >= 1) {
-                    setDown(21);
-                } else if (value > 0) {
-                    setDown(15);
-                }
                 sanity = Math.max(sanity - (float) value, 0);
+                setCoolDown(60);
             }
         }
     }
@@ -85,11 +74,6 @@ public class Sanity implements ISanity {
     public void recoverSanity(double value) {
         if (value >= 0 && enable) {
             if (sanity < max) {
-                if (value >= 1) {
-                    setUp(21);
-                } else if (value > 0) {
-                    setUp(15);
-                }
                 sanity = Math.min(sanity + (float) value, max);
             }
         }
@@ -133,9 +117,8 @@ public class Sanity implements ISanity {
         public NBTBase writeNBT(Capability<ISanity> capability, ISanity instance, EnumFacing side) {
             NBTTagCompound compound = new NBTTagCompound();
             compound.setInteger("Max", instance.getMax());
+            compound.setInteger("CoolDown", instance.getCoolDown());
             compound.setFloat("Sanity", instance.getSanity());
-            compound.setInteger("Down", instance.getDown());
-            compound.setInteger("Up", instance.getUp());
             compound.setBoolean("Enable", instance.getEnable());
             return compound;
         }
@@ -145,9 +128,8 @@ public class Sanity implements ISanity {
             if (nbt instanceof NBTTagCompound) {
                 NBTTagCompound compound = (NBTTagCompound) nbt;
                 instance.setMax(compound.getInteger("Max"));
+                instance.setCoolDown(compound.getInteger("CoolDown"));
                 instance.setSanity(compound.getFloat("Sanity"));
-                instance.setDown(compound.getInteger("Down"));
-                instance.setUp(compound.getInteger("Up"));
                 instance.setEnable(compound.getBoolean("Enable"));
             }
         }

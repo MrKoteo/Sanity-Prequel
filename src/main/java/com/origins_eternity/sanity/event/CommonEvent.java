@@ -147,29 +147,25 @@ public class CommonEvent {
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         EntityPlayer player = event.player;
-        if ((!player.isSpectator()) && (!player.isCreative())) {
+        if (!player.isSpectator() && !player.isCreative()) {
+            if (event.phase != TickEvent.Phase.END) return;
+            ISanity sanity = player.getCapability(SANITY, null);
             if (player.ticksExisted % 10 == 0 && !player.world.isRemote) {
-                ISanity sanity = player.getCapability(SANITY, null);
                 if (Loader.isModLoaded("thaumcraft")) {
                     sanity.setMax(100 - getWarp(player));
                     if (sanity.getSanity() > sanity.getMax()) {
                         sanity.setSanity(sanity.getMax());
                     }
                 }
-                if (sanity.getDown() > 0) {
-                    sanity.setDown(sanity.getDown() - 1);
-                }
-                if (sanity.getUp() > 0) {
-                    sanity.setUp(sanity.getUp() - 1);
-                }
                 double value = tickPlayer(player);
-                if (value > 0) {
+                if (value > 0 && sanity.getCoolDown() == 0) {
                     sanity.recoverSanity(value);
                 } else if (value < 0) {
                     sanity.consumeSanity(-value);
                 }
                 syncSanity(player);
             }
+            sanity.coolDown();
         }
     }
 
@@ -179,8 +175,9 @@ public class CommonEvent {
             EntityPlayer player = event.getCausedByPlayer();
             if (!player.world.isRemote) {
                 ISanity sanity = player.getCapability(SANITY, null);
-                if (sanity.getUp() == 0) {
+                if (sanity.getCoolDown() == 0) {
                     sanity.recoverSanity(Mechanics.bred);
+                    sanity.setCoolDown(20);
                 }
             }
         }
@@ -219,8 +216,9 @@ public class CommonEvent {
             } else if (event.getEntity() instanceof EntityMob && event.getSource().getTrueSource() instanceof EntityPlayer) {
                 EntityPlayer player = (EntityPlayer) event.getSource().getTrueSource();
                 ISanity sanity = player.getCapability(SANITY, null);
-                if (sanity.getUp() == 0) {
+                if (sanity.getCoolDown() == 0) {
                     sanity.recoverSanity(Mechanics.killMob);
+                    sanity.setCoolDown(20);
                 }
             }
         }

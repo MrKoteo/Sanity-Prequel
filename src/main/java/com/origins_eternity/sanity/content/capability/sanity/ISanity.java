@@ -9,13 +9,11 @@ public interface ISanity {
 
     float getSanity();
 
-    void setDown(int down);
+    int getCoolDown();
 
-    int getDown();
+    void setCoolDown(int coolDown);
 
-    void setUp(int up);
-
-    int getUp();
+    void coolDown();
 
     void setEnable(boolean enable);
 
