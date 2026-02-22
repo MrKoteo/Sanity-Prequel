@@ -2,19 +2,26 @@ package com.origins_eternity.sanity.content.sound;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import static com.origins_eternity.sanity.Sanity.MOD_ID;
 
+@Mod.EventBusSubscriber(modid = MOD_ID)
 public class Sounds {
-    public static SoundEvent INSANITY = addSounds("insanity");
-    public static SoundEvent FLOWERS_EQUIP = addSounds("flowers_equip");
+    public static SoundEvent INSANITY = createSound("insanity");
+    public static SoundEvent LEAVES_RUSTLE = createSound("leaves_rustle");
 
-    private static SoundEvent addSounds(String name) {
+    @SubscribeEvent
+    public static void registerSounds(RegistryEvent.Register<SoundEvent> event) {
+        event.getRegistry().register(LEAVES_RUSTLE);
+        event.getRegistry().register(INSANITY);
+    }
+
+    private static SoundEvent createSound(String name) {
         ResourceLocation location = new ResourceLocation(MOD_ID, name);
-        SoundEvent event = new SoundEvent(location);
-        event.setRegistryName(location);
-        GameRegistry.findRegistry(SoundEvent.class).register(event);
-        return event;
+        return new SoundEvent(location).setRegistryName(location);
+
     }
 }

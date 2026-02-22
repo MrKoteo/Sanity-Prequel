@@ -8,15 +8,16 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import static com.origins_eternity.sanity.utils.proxy.ClientProxy.icon;
+import static com.origins_eternity.sanity.Sanity.MOD_ID;
 
 public class Composure extends Potion {
-    private static final String name = "composure";
+    private static final ResourceLocation icon = new ResourceLocation(MOD_ID, "textures/gui/icon.png");
 
-    public Composure() {
+    public Composure(String name) {
         super(false, 0x178EB0);
         setPotionName("effect." + name);
         setRegistryName(name);

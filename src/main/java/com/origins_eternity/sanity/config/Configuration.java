@@ -128,12 +128,6 @@ public class Configuration {
         @Config.RangeDouble(min = 0.0, max = 100.0)
         public double killMob = 2.5;
 
-        @Config.Name("Eat")
-        @Config.LangKey("config.sanity.eat")
-        @Config.Comment("The sanity to increase when players eat food that isn't in the list.")
-        @Config.RangeDouble(min = 0.0, max = 100.0)
-        public double eat = 5.0;
-
         @Config.Name("Quest")
         @Config.LangKey("config.sanity.quest")
         @Config.Comment("The sanity to increase when players complete a quest. (only support FTB Quests)")
@@ -182,10 +176,10 @@ public class Configuration {
         @Config.RangeDouble(min = 0.0, max = 100.0)
         public double lost = 30.0;
 
-        @Config.Name("Food")
-        @Config.LangKey("config.sanity.food")
-        @Config.Comment("The list of food and the sanity to decrease or increase when eat it. ('food;value')")
-        public String[] food = new String[]{"minecraft:rotten_flesh;-3.0", "minecraft:spider_eye;-3.0", "minecraft:chicken;-2.0", "minecraft:porkchop;-2.0", "minecraft:mutton;-2.0", "minecraft:beef;-2.0", "minecraft:rabbit;-2.0", "minecraft:poisonous_potato;-2.0", "minecraft:fish;-2.0", "minecraft:fish:1;-2.0", "minecraft:fish:2;-2.0", "minecraft:fish:3;-2.0"};
+        @Config.Name("Item")
+        @Config.LangKey("config.sanity.item")
+        @Config.Comment("The list of item and the sanity to decrease or increase when eat it. ('item;value')")
+        public String[] item = new String[]{"minecraft:rotten_flesh;-3.0", "minecraft:spider_eye;-3.0", "minecraft:chicken;-2.0", "minecraft:porkchop;-2.0", "minecraft:mutton;-2.0", "minecraft:beef;-2.0", "minecraft:rabbit;-2.0", "minecraft:poisonous_potato;-2.0", "minecraft:fish;-2.0", "minecraft:fish:1;-2.0", "minecraft:fish:2;-2.0", "minecraft:fish:3;-2.0"};
 
         @Config.Name("Environment")
         @Config.LangKey("config.sanity.environment")

@@ -15,7 +15,6 @@ import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.ItemFood;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
@@ -68,13 +67,11 @@ public class CommonEvent {
     public static void LivingEntityUseItem(LivingEntityUseItemEvent.Finish event) {
         if (event.getEntityLiving() instanceof EntityPlayerMP) {
             EntityPlayerMP player = (EntityPlayerMP) event.getEntityLiving();
-            if ((!player.isCreative()) && (event.getItem().getItem() instanceof ItemFood)) {
-                double value = Mechanics.eat;
+            if (!player.isCreative()) {
                 ISanity sanity = player.getCapability(SANITY, null);
                 int num = stackMatched(event.getItem());
-                if (num != -1) {
-                    value = Double.parseDouble(Mechanics.food[num].split(";")[1]);
-                }
+                if (num == -1) return;
+                double value = Double.parseDouble(Mechanics.item[num].split(";")[1]);
                 if (value > 0) {
                     if (Loader.isModLoaded("foodspoiling")) {
                         double spoilage = FoodSpoiling.getPercentage(event.getItem(), player);

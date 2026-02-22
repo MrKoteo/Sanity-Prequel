@@ -3,10 +3,12 @@ package com.origins_eternity.sanity.compat;
 
 import com.origins_eternity.sanity.content.capability.sanity.ISanity;
 import mod.acgaming.foodspoiling.logic.FSData;
+import mod.acgaming.foodspoiling.logic.FSLogic;
 import mod.acgaming.foodspoiling.logic.FSMaps;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumActionResult;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -16,14 +18,11 @@ import static mod.acgaming.foodspoiling.logic.FSLogic.getTicksToRot;
 
 public class FoodSpoiling {
     public static double getPercentage(ItemStack stack, EntityPlayer player) {
-        if (FSData.hasCreationTime(stack)) {
-            long creationTime = FSData.getCreationTime(stack);
-            int rotTicks = getTicksToRot(player, stack);
-            if (rotTicks >= 0) {
-                long existTime = player.world.getTotalWorldTime() - creationTime;
-                double percentage = 1 - existTime / (double)rotTicks;
-                return Math.round(percentage * 10) / 10.0;
-            }
+        if (FSLogic.canRot(stack) == EnumActionResult.SUCCESS) {
+            int remain = FSData.getRemainingLifetime(stack);
+            int total = getTicksToRot(player, stack);
+            double percentage = (double) remain / total;
+            return Math.round(percentage * 10) / 10.0;
         }
         return 0;
     }

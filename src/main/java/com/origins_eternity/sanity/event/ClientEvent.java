@@ -1,8 +1,7 @@
 package com.origins_eternity.sanity.event;
 
 import com.origins_eternity.sanity.content.capability.sanity.ISanity;
-import net.minecraft.client.audio.ISound;
-import net.minecraft.client.audio.PositionedSoundRecord;
+import com.origins_eternity.sanity.content.sound.InSanity;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,47 +26,38 @@ import static com.origins_eternity.sanity.utils.proxy.ClientProxy.mc;
 @Mod.EventBusSubscriber(modid = MOD_ID, value = Side.CLIENT)
 public class ClientEvent {
     private static final Random rand = new Random();
-
-    public static int up = 0;
-    public static int down = 0;
-    public static int glow = 0;
-    public static double value = -1;
-    public static int flash = Overlay.flash;
     private static int sound;
-    private static int whisper;
+    private static InSanity insanity;
+    public static int up = -1;
+    public static int down = -1;
+    public static int glow = -1;
+    public static double value = -1;
+    public static int flash = -1;
 
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        EntityPlayer player = event.player;
-        if (!player.isCreative() && !player.isSpectator() && player == mc().player) {
-            if (event.phase != TickEvent.Phase.END) return;
-            ISanity sanity = player.getCapability(SANITY, null);
-            if (!sanity.getEnable() || isAwake(player)) return;
-            update(sanity);
-            if (value < Effect.sound) {
-                sound--;
-                if (sound <= 0) {
-                    int number = rand.nextInt(Effect.sounds.length);
-                    SoundEvent sounds = SoundEvent.REGISTRY.getObject(new ResourceLocation(Effect.sounds[number]));
-                    if (sounds != null) {
-                        player.playSound(sounds, 1f, 0.5f);
+        if (event.side == Side.CLIENT && event.phase == TickEvent.Phase.END) {
+            EntityPlayer player = event.player;
+            if (!player.isCreative() && !player.isSpectator() && player == mc().player) {
+                ISanity sanity = player.getCapability(SANITY, null);
+                if (!sanity.getEnable() || isAwake(player)) return;
+                update(sanity);
+                if (value < Effect.sound) {
+                    sound--;
+                    if (sound <= 0) {
+                        int number = rand.nextInt(Effect.sounds.length);
+                        SoundEvent sounds = SoundEvent.REGISTRY.getObject(new ResourceLocation(Effect.sounds[number]));
+                        if (sounds != null) {
+                            player.playSound(sounds, 1f, 0.5f);
+                        }
+                        sound = rand.nextInt(600) + 800;
                     }
-                    sound = rand.nextInt(600) + 800;
                 }
-            }
-            if (value < Effect.whisper) {
-                whisper--;
-                ISound insanity = PositionedSoundRecord.getMasterRecord(INSANITY, 1f);
-                if (whisper <= 0) {
-                    mc().getSoundHandler().playSound(insanity);
-                    whisper = 680;
-                }
-            }
-            if (Overlay.flash != -1) {
-                if (up > 0 || down > 0) {
-                    flash = Overlay.flash * 20;
-                } else if (flash > 0) {
-                    flash--;
+                if (value < Effect.whisper) {
+                    if (insanity == null || insanity.isDonePlaying()) {
+                        insanity = new InSanity(INSANITY, player);
+                        mc().getSoundHandler().playSound(insanity);
+                    }
                 }
             }
         }
@@ -122,19 +112,23 @@ public class ClientEvent {
             value = sanity.getSanity();
             return;
         }
-        if (up > 0) up--;
-        if (down > 0) down--;
-        if (glow > 0) glow--;
-        if (sanity.getSanity() < value && down == 0) {
-            down = 59;
-        } else if (sanity.getSanity() > value && up == 0) {
-            up = 59;
-        } else {
-            return;
+        if (up > -1) up--;
+        if (down > -1) down--;
+        if (glow > -1) glow--;
+        if (flash > 0) flash--;
+        if (sanity.getSanity() != value) {
+            if (sanity.getSanity() < value && down <= 1) {
+                down = 59;
+            } else if (sanity.getSanity() > value && up <= 1) {
+                up = 59;
+            }
+            if (Math.abs(sanity.getSanity() - value) >= 1.0 && glow <= 1) {
+                glow = 29;
+            }
+            if (Overlay.flash != -1) {
+                flash = Overlay.flash * 20;
+            }
+            value = sanity.getSanity();
         }
-        if (Math.abs(sanity.getSanity() - value) >= 1.0) {
-            glow = 29;
-        }
-        value = sanity.getSanity();
     }
 }

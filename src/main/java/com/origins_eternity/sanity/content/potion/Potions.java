@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 public class Potions {
     public static final ArrayList<Potion> POTIONS = new ArrayList<>();
-    public static final Potion Composure = new Composure();
+    public static final Potion Composure = new Composure("composure");
     public static final PotionType Composure_Potion = new PotionType("composure", new PotionEffect(Composure, 600)).setRegistryName("composure");
     public static final PotionType Long_Composure_Potion = new PotionType("composure", new PotionEffect(Composure, 1800)).setRegistryName("long_composure");
     public static final PotionType Strong_Composure_Potion = new PotionType("composure", new PotionEffect(Composure, 300, 1)).setRegistryName("strong_composure");

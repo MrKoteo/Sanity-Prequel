@@ -7,7 +7,6 @@ import baubles.api.cap.IBaublesItemHandler;
 import baubles.api.render.IRenderBauble;
 import com.origins_eternity.sanity.content.capability.Capabilities;
 import com.origins_eternity.sanity.content.capability.sanity.ISanity;
-import com.origins_eternity.sanity.content.sound.Sounds;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFlower;
 import net.minecraft.client.model.ModelBiped;
@@ -30,6 +29,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import static com.origins_eternity.sanity.Sanity.MOD_ID;
 import static com.origins_eternity.sanity.config.Configuration.Mechanics;
+import static com.origins_eternity.sanity.content.sound.Sounds.LEAVES_RUSTLE;
 import static com.origins_eternity.sanity.content.tab.CreativeTab.SANITY;
 import static com.origins_eternity.sanity.utils.Utils.isWet;
 import static com.origins_eternity.sanity.utils.proxy.ClientProxy.mc;
@@ -65,7 +65,7 @@ public class Baubles extends ItemArmor implements IBauble, IRenderBauble {
         } else {
             return new ActionResult<>(EnumActionResult.FAIL, stack);
         }
-        player.playSound(Sounds.FLOWERS_EQUIP, .75F, 2f);
+        player.playSound(LEAVES_RUSTLE, .75F, 2f);
         return new ActionResult<>(EnumActionResult.SUCCESS, stack);
     }
 
