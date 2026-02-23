@@ -23,6 +23,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.Loader;
@@ -70,8 +71,8 @@ public class Utils {
     }
 
     public static int stackMatched(ItemStack item) {
-        for (int i = 0; i < Mechanics.food.length; i++) {
-            String[] parts = Mechanics.food[i].split(";");
+        for (int i = 0; i < Mechanics.item.length; i++) {
+            String[] parts = Mechanics.item[i].split(";");
             String[] name = parts[0].split(":");
             if (name.length == 2) {
                 if (item.getItem().equals(Item.REGISTRY.getObject(new ResourceLocation(parts[0])))) {
@@ -202,5 +203,16 @@ public class Utils {
 
     public static boolean isAwake(EntityPlayer player) {
         return player.isPotionActive(Potions.Composure) || (Loader.isModLoaded("firstaid") && player.isPotionActive(EventHandler.MORPHINE));
+    }
+
+    public static int findSurface(World world, BlockPos pos) {
+        for (int y = 0; y <= 5; y++) {
+            BlockPos feet = pos.down(y);
+            BlockPos under = pos.down(y + 1);
+            if (!world.isBlockFullCube(feet) && world.isBlockFullCube(under)) {
+                return feet.getY();
+            }
+        }
+        return -1;
     }
 }

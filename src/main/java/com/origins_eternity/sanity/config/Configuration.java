@@ -233,12 +233,12 @@ public class Configuration {
         @Config.LangKey("config.sanity.shake")
         @Config.Comment("Make brain overlay shake on screen when sanity is lower than the value. (set this to -1 to disable)")
         @Config.RangeInt(min = -1, max = 100)
-        public int shake = 60;
+        public int shake = 40;
 
         @Config.Name("Blood Overlay")
         @Config.LangKey("config.sanity.blood")
         @Config.Comment("Enable blood overlay when sanity is lower than the value. (set this to -1 to disable)")
-        public int blood = 60;
+        public int blood = 55;
     }
 
     public static class ConfigEffect {
@@ -257,7 +257,7 @@ public class Configuration {
         @Config.RequiresMcRestart
         @Config.LangKey("config.sanity.level2")
         @Config.Comment("Set level2 shader and enable when sanity is lower than the value. ('shader;value')")
-        public String level2 = "notch.json;40";
+        public String level2 = "notch.json;35";
 
         @Config.Name("Level3")
         @Config.RequiresMcRestart
@@ -275,10 +275,20 @@ public class Configuration {
         @Config.Comment("The list of sounds which will play randomly when sanity is low.")
         public String[] sounds = new String[]{"entity.creeper.primed", "entity.tnt.primed", "entity.skeleton.ambient", "entity.skeleton.step", "entity.zombie.ambient", "entity.zombie.step", "entity.enderman.ambient", "entity.hostile.big_fall", "block.chest.open", "block.chest.close", "block.wooden_door.open", "block.wooden_trapdoor.open", "entity.wolf.growl"};
 
+        @Config.Name("Ghost Effects")
+        @Config.LangKey("config.sanity.ghost")
+        @Config.Comment("Spawn fake mobs around player when sanity is lower than the value. (set this to -1 to disable)")
+        public int ghost = 45;
+
+        @Config.Name("Random Ghosts")
+        @Config.LangKey("config.sanity.ghosts")
+        @Config.Comment("The list of ghosts with their exist time which will spawn randomly when sanity is low. ('ghost;seconds')")
+        public String[] ghosts = new String[]{"minecraft:creeper;5", "minecraft:skeleton;5", "minecraft:creeper;5", "minecraft:zombie;5", "minecraft:enderman;5"};
+
         @Config.Name("Whisper Effects")
         @Config.LangKey("config.sanity.whisper")
         @Config.Comment("Play whispering when sanity is lower than the value. (set this to -1 to disable)")
-        public int whisper = 45;
+        public int whisper = 30;
     }
 
     @Mod.EventBusSubscriber(modid = MOD_ID)
