@@ -6,6 +6,7 @@ item.sanity.garland.name=Garland
 item.sanity.umbrella.name=Umbrella
 
 effect.composure=Composure
+tipped_arrow.effect.composure=Arrow of Composure
 potion.effect.composure=Potion of Composure
 splash_potion.effect.composure=Composure Splash Potion
 lingering_potion.effect.composure=Composure Lingering Potion
@@ -109,7 +110,7 @@ config.sanity.sounds.tooltip=The list of sounds which will play randomly when sa
 config.sanity.ghost=Ghost Effects
 config.sanity.ghost.tooltip=Spawn ghosts (fake mobs) around player when sanity is lower than the value. (set this to -1 to disable)
 config.sanity.ghosts=Random Ghosts
-config.sanity.ghosts.tooltip=The list of ghosts with their exist time which will spawn randomly when sanity is low. ('ghost;seconds')
+config.sanity.ghosts.tooltip=The list of ghosts which will spawn within the radius of the player randomly when sanity is low. ('ghost;radius')
 config.sanity.whisper=Whisper Effects
 config.sanity.whisper.tooltip=Play whispering when sanity is lower than the value. (set this to -1 to disable)
 

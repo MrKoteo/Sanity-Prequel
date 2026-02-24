@@ -282,7 +282,7 @@ public class Configuration {
 
         @Config.Name("Random Ghosts")
         @Config.LangKey("config.sanity.ghosts")
-        @Config.Comment("The list of ghosts with their exist time which will spawn randomly when sanity is low. ('ghost;seconds')")
+        @Config.Comment("The list of ghosts which will spawn within the radius of the player randomly when sanity is low. ('ghost;radius')")
         public String[] ghosts = new String[]{"minecraft:creeper;5", "minecraft:skeleton;5", "minecraft:creeper;5", "minecraft:zombie;5", "minecraft:enderman;5"};
 
         @Config.Name("Whisper Effects")

@@ -164,14 +164,14 @@ public class ClientEvent {
             World world = player.world;
             Entity entity = EntityList.createEntityByIDFromName(location, world);
             if (entity instanceof EntityLivingBase) {
-                FakeEntity fakeEntity = new FakeEntity(world, entity, Integer.parseInt(args[1]));
+                double radius = world.rand.nextDouble() * Integer.parseInt(args[1]);
                 float yawOffset = (world.rand.nextFloat() * 2f - 1f) * 30f;
                 double yawRad = Math.toRadians(player.rotationYaw + yawOffset);
-                double radius = 5;
                 double x = (int) player.posX - Math.sin(yawRad) * radius + 0.5;
                 double z = (int) player.posZ + Math.cos(yawRad) * radius + 0.5;
                 double y = findSurface(world, new BlockPos(x, (int) player.posY + 5, z));
                 if (y == -1) return false;
+                FakeEntity fakeEntity = new FakeEntity(world, entity);
                 WorldClient clientWorld = (WorldClient) world;
                 fakeEntity.setPosition(x, y, z);
                 clientWorld.addEntityToWorld(fakeEntity.getEntityId(), fakeEntity);

@@ -4,43 +4,50 @@
 ## Introduction
 **Inspired by the [Sanity: Descent Into Madness](https://github.com/croissantnova/SanityDescentIntoMadness) mod, players will gain some bad effects when in low sanity. Textures modified from Sanity: Descent Into Madness by croissantnova ([consent](https://s21.ax1x.com/2025/02/02/pEZa9S0.png)). Sound effects provided by [Zapsplat](https://www.zapsplat.com).**
 ## Features
-**Most feature support custom configurations. Turn to mod's config file for more information.**
+**Most feature support custom configurations. Turn to mod's config file for more information. _Since version 1.3.3, you need Baubles mod as dependency._**
 ### Garland
-**Each garland has 60 durability in total, use any small flowers to craft it. Be in danger like water, web, fire, lightning, and explosion can lead to damage it while wearing on head. (support Baubles)**
+**Each garland has 60 durability in total, use any small flowers to craft it. Water, fire, lightning, and explosion can lead to damage it while wearing on head. (Equipped in armor or baubles slot)**
 ### Umbrella
 **Holding an umbrella can prevent player from decreasing sanity and damaging garland by rain. Umbrella has 120 durability, which will damage from lightning, fire, explosion. And break or attack can also damage it.**
 ![This is an image](https://s21.ax1x.com/2025/02/05/pEeKjN8.png)
 ### Potion
-**Add composure potion effect, which can recover 1 sanity every `50 >> amplifier` ticks. Brew any small flowers with an swiftness potion.**
+**Add composure potion effect, which can recover 1 sanity every `50 >> amplifier` ticks. Brew any small flowers with an regeneration potion.**
 ### Effects
-- **Sanity ≤ 60, at the edges of things, red, green, and blue seem to be separated in your eyes.**
-- **Sanity ≤ 50, players will experience auditory hallucinations. (support custom sound list)**
-- **Sanity ≤ 45, whispers can be heard.**
-- **Sanity ≤ 40, there are a grid of small dots lies in your eyes. The world looks washed out...**
-- **Sanity ≤ 10, game's graphics are even more distorted, with details barely legible.**
+- **Sanity < 60, at the edges of things, red, green, and blue seem to be separated in your eyes.**
+- **Sanity < 55, blood texture flicker on the screen when sanity decrease.**
+- **Sanity < 50, players will experience auditory hallucinations. (support custom sound list)**
+- **Sanity < 45, players experiences hallucinations and will see ghosts. (support custom ghost list)**
+- **Sanity < 40, brain overlay starts to shake.**
+- **Sanity < 35, there are a grid of small dots lies in your eyes. The world looks washed out...**
+- **Sanity < 30, whispers can be heard.**
+- **Sanity < 10, game's graphics are even more distorted, with details barely legible.**
 ![This is an image](https://s21.ax1x.com/2025/01/18/pEkiLJU.png)
+
+**Using potion of composure or morphine in First Aid mod grants temporary immunity to all negative effects.**
 ### Decrease Sanity
 - **Attack animals, villagers and other players.**  
-- **Eating bad foods such as carrion, raw meat, etc. (support custom configurations)**  
+- **Eating bad foods such as carrion, raw meat, etc. (support custom items)**  
 - **Struck by lightning.**  
 - **Hunger.**  
 - **Thirst. (support Tough As Nails and SimpleDifficulty)**  
 - **Get hurt.**  
 - **Rain.**  
-- **Dark. (Only work when player doesn't have night vision effect)**  
+- **Dark. (only work when player doesn't have night vision effect)**  
 - **Around mobs. (within 5 blocks)**  
 - **Around players with sanity < 50. (within 5 blocks)**  
+- **Food spoiled in inventory. (only work with Food Spoiling mod)**
 - **Choking.**
 - **Change dimensions.**  
 - **Falling.**  
 - **Lost pets.**  
-- **Trapped in blocks like web and water. (support custom configurations)**
+- **Trapped in blocks like web and water. (support custom blocks)**
 ### Increase Sanity    
 - **Sleep.**  
-- **Eating healthy foods.**  
+- **Bred animals.**  
+- **Eating healthy foods. (support custom items)**  
 - **Wearing garland.**  
 - **Gain advancements.**  
-- **Compelete quests. (only support FTB Quests)**  
+- **Complete quests. (only support FTB Quests)**  
 - **Stay with pets. (within 5 blocks)**  
 - **Around players with sanity ≥ 50. (within 5 blocks)**  
 - **Kill mobs.**

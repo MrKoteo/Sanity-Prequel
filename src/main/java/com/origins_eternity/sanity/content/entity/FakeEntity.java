@@ -15,15 +15,13 @@ import static com.origins_eternity.sanity.utils.proxy.ClientProxy.mc;
 @SideOnly(Side.CLIENT)
 public class FakeEntity extends EntityLiving {
     private final EntityLivingBase living;
-    private final  int existTime;
     private static int nextClientId = Integer.MIN_VALUE / 2;
     private final float offsetYaw;
 
-    public FakeEntity(World world, Entity entity, int existTime) {
+    public FakeEntity(World world, Entity entity) {
         super(world);
         this.living = (EntityLivingBase) entity;
         this.noClip = true;
-        this.existTime = existTime;
         this.setEntityInvulnerable(true);
         this.setEntityId(nextClientId++);
         this.offsetYaw = world.rand.nextFloat() * 360;
@@ -49,8 +47,7 @@ public class FakeEntity extends EntityLiving {
 
     @Override
     public void onUpdate() {
-        ticksExisted++;
-        if (mc().player != null) {
+        if (world.isRemote && mc().player != null) {
             double dx = mc().player.posX - posX;
             double dz = mc().player.posZ - posZ;
             float targetYaw = (float) (Math.toDegrees(Math.atan2(dz, dx))) - 90f;
@@ -68,7 +65,7 @@ public class FakeEntity extends EntityLiving {
             living.prevRotationPitch = rotationPitch;
             living.prevRotationYawHead = targetYaw;
             living.prevRenderYawOffset = offsetYaw;
-            if (ticksExisted > existTime * 20) this.setDead();
+            if (ticksExisted > 5 * 20) this.setDead();
         }
     }
 

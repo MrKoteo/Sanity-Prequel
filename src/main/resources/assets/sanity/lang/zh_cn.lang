@@ -6,6 +6,7 @@ item.sanity.garland.name=花环
 item.sanity.umbrella.name=雨伞
 
 effect.composure=镇定
+tipped_arrow.effect.composure=镇定之箭
 potion.effect.composure=镇定药水
 splash_potion.effect.composure=喷溅型镇定药水
 lingering_potion.effect.composure=滞留型镇定药水
@@ -105,11 +106,11 @@ config.sanity.level3.tooltip=设置三阶段着色器并在理智值小于设定
 config.sanity.sound=声音效果
 config.sanity.sound.tooltip=当玩家理智值小于设定值时，随机播放列表中的声音。（设置为-1以禁用）
 config.sanity.sounds=随机声音
-config.sanity.sounds.tooltip=当玩家理智较低时，将会被随机播放的声音列表。
+config.sanity.sounds.tooltip=当玩家理智较低时，会被随机播放的声音列表。
 config.sanity.ghost=鬼魂效果
 config.sanity.ghost.tooltip=当玩家理智值小于设定值时，随机生成列表中的鬼魂（虚假的怪物）。（设置为-1以禁用）
 config.sanity.ghosts=随机鬼魂
-config.sanity.ghosts.tooltip=当玩家理智较低时，将会被随机生成的鬼魂及其暂留时间列表。（"鬼魂;秒数"）
+config.sanity.ghosts.tooltip=当玩家理智较低时，会在玩家半径范围内随机生成的鬼魂列表。（"鬼魂;半径"）
 config.sanity.whisper=低语效果
 config.sanity.whisper.tooltip=当理智值小于设定值时，播放低语声。（设置为-1以禁用）
 
