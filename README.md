@@ -4,7 +4,7 @@
 ## Introduction
 **Inspired by the [Sanity: Descent Into Madness](https://github.com/croissantnova/SanityDescentIntoMadness) mod, players will gain some bad effects when in low sanity. Textures modified from Sanity: Descent Into Madness by croissantnova ([consent](https://s21.ax1x.com/2025/02/02/pEZa9S0.png)). Sound effects provided by [Zapsplat](https://www.zapsplat.com). Since _version 1.3.3_, you need [Baubles](https://github.com/Azanor/Baubles) mod as dependency. Since _version 1.4.6_, you need [GeckoLib](https://github.com/bernie-g/geckolib) mod as dependency.**
 ## Content
-**This mod adds a garland, an umbrella, and a potion of composure to the game. The following are their feature descriptions.**
+**This mod adds a garland, an umbrella, a potion of composure and shadow monster to the game. The following are their feature descriptions.**
 ### Garland
 **Each garland has 60 durability in total, use any small flowers to craft it. Water, fire, lightning, and explosion can lead to damage it while wearing on head. (Equipped in armor or baubles slot)**
 ### Umbrella
@@ -25,7 +25,7 @@
 
 ![This is an image](https://s41.ax1x.com/2026/07/27/pmR42eH.png)
 
-**Using potion of composure or morphine in First Aid mod grants temporary immunity to all negative effects.**
+**Using potion of composure or morphine in First Aid mod grants temporary immunity to all negative effects. (except shadow monster)**
 ### Decrease Sanity
 - **Attack animals, villagers and other players.**  
 - **Eating bad foods such as carrion, raw meat, etc. (support custom items)**  
