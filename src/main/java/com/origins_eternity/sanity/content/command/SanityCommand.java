@@ -13,6 +13,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
+import static com.origins_eternity.sanity.utils.Utils.validDimension;
+
 public class SanityCommand extends CommandBase {
     private static final String name = "sanity";
 
@@ -37,15 +39,11 @@ public class SanityCommand extends CommandBase {
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if (args.length == 2 || args.length == 3) {
             EntityPlayerMP player = args.length == 2 ? getCommandSenderAsPlayer(sender) : getPlayer(server, sender, args[1]);
-            ISanity sanity = player.getCapability(Capabilities.SANITY, null);
-            if (!sanity.getEnable()) {
-                throw new CommandException("commands.sanity.disabled");
-            } else {
+            if (validDimension(player.dimension)) {
                 Scanner scanner = args.length == 2 ? new Scanner(args[1]) : new Scanner(args[2]);
-                if (!scanner.hasNextDouble()) {
-                    throw new NumberInvalidException("commands.generic.num.invalid", scanner.next());
-                } else {
+                if (scanner.hasNextDouble()) {
                     double value = scanner.nextDouble();
+                    ISanity sanity = player.getCapability(Capabilities.SANITY, null);
                     switch (args[0]) {
                         case "add":
                             sanity.setSanity(sanity.getSanity() + value);
@@ -59,7 +57,11 @@ public class SanityCommand extends CommandBase {
                         default:
                             throw new WrongUsageException("commands.sanity.usage");
                     }
+                } else {
+                    throw new NumberInvalidException("commands.generic.num.invalid", scanner.next());
                 }
+            } else {
+                throw new CommandException("commands.sanity.disabled");
             }
         } else {
             throw new WrongUsageException("commands.sanity.usage");

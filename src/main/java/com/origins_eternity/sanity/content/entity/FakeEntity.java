@@ -1,10 +1,17 @@
 package com.origins_eternity.sanity.content.entity;
 
+import com.origins_eternity.sanity.capability.Capabilities;
+import com.origins_eternity.sanity.capability.sanity.ISanity;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -13,8 +20,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nullable;
 
 import static com.origins_eternity.sanity.config.Configuration.Effect;
-import static com.origins_eternity.sanity.event.ClientEvent.enabled;
-import static com.origins_eternity.sanity.event.ClientEvent.value;
+import static com.origins_eternity.sanity.utils.Utils.findSurface;
 import static com.origins_eternity.sanity.utils.Utils.isAwake;
 import static com.origins_eternity.sanity.utils.proxy.ClientProxy.mc;
 
@@ -58,7 +64,8 @@ public class FakeEntity extends EntityLiving {
         if (world.isRemote) {
             EntityPlayerSP player = mc().player;
             if (player == null) return;
-            if (!enabled || isAwake(player) || value >= Effect.ghost || ticksExisted > liveTicks) {
+            ISanity sanity = player.getCapability(Capabilities.SANITY, null);
+            if (!sanity.getEnable() || isAwake(player) || sanity.getSanity() >= Effect.ghost || ticksExisted > liveTicks) {
                 this.setDead();
                 return;
             }
@@ -88,5 +95,33 @@ public class FakeEntity extends EntityLiving {
 
     public Entity getFakeEntity() {
         return living;
+    }
+
+    public static boolean spawnFakeEntity(EntityPlayer player) {
+        World world = player.world;
+        String[] args = Effect.ghosts[world.rand.nextInt(Effect.ghosts.length)].split(";");
+        ResourceLocation location = new ResourceLocation(args[0]);
+        if (EntityList.isRegistered(location) && args.length > 4) {
+            Entity entity = EntityList.createEntityByIDFromName(location, world);
+            if (entity instanceof EntityLivingBase) {
+                int min_radius = Integer.parseInt(args[1]);
+                int max_radius = Integer.parseInt(args[2]);
+                double radius = 0.5 + min_radius + world.rand.nextDouble() * (max_radius - min_radius);
+                double yawRad = Math.toRadians(player.rotationYaw + world.rand.nextDouble() * 120 - 60);
+                double x = (int) (player.posX - Math.sin(yawRad) * radius) + 0.5;
+                double z = (int) (player.posZ + Math.cos(yawRad) * radius) + 0.5;
+                double y = findSurface(world, new BlockPos(x, (int) player.posY + 5, z));
+                if (y == -1) return false;
+                int min_ticks = Integer.parseInt(args[3]);
+                int max_ticks = Integer.parseInt(args[4]);
+                int liveTicks = min_ticks + world.rand.nextInt(max_ticks - min_ticks);
+                FakeEntity fakeEntity = new FakeEntity(world, entity, liveTicks);
+                WorldClient clientWorld = (WorldClient) world;
+                fakeEntity.setPosition(x, y, z);
+                clientWorld.addEntityToWorld(fakeEntity.getEntityId(), fakeEntity);
+                return true;
+            }
+        }
+        return false;
     }
 }

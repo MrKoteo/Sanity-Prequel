@@ -15,6 +15,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.relauncher.Side;
+import software.bernie.geckolib3.GeckoLib;
 
 import static com.origins_eternity.sanity.Sanity.packetHandler;
 import static com.origins_eternity.sanity.content.potion.Potions.registerPotionRecipes;
@@ -22,6 +23,7 @@ import static com.origins_eternity.sanity.content.potion.Potions.registerPotionR
 public class CommonProxy {
     public void preInit(FMLPreInitializationEvent event) {
         registerMessage();
+        GeckoLib.initialize();
     }
 
     public void init(FMLInitializationEvent event) {

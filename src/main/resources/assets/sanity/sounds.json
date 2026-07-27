@@ -1,7 +1,8 @@
 {
 	"insanity": {
 		"sounds": [
-			"sanity:insanity"
+			"sanity:insanity",
+			"sanity:insanity1"
 		],
 		"subtitle": "sanity.subtitle.insanity",
 		"stream": true
@@ -11,5 +12,17 @@
 			"sanity:leaves_rustle"
 		],
 		"subtitle": "sanity.subtitle.leaves_rustle"
+	},
+	"shadow_monster_hurt": {
+		"sounds": [
+			"sanity:whoosh"
+		],
+		"subtitle": "sanity.subtitle.shadow_monster_hurt"
+	},
+	"shadow_monster_ambient": {
+		"sounds": [
+			"sanity:swish0"
+		],
+		"subtitle": "sanity.subtitle.shadow_monster_ambient"
 	}
 }

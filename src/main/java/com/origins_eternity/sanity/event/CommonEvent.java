@@ -7,6 +7,7 @@ import com.origins_eternity.sanity.capability.sanity.ISanity;
 import com.origins_eternity.sanity.capability.sanity.Sanity;
 import com.origins_eternity.sanity.compat.FoodSpoiling;
 import com.origins_eternity.sanity.content.armor.Garland;
+import com.origins_eternity.sanity.content.entity.ShadowMonster;
 import mod.acgaming.foodspoiling.logic.FSData;
 import net.minecraft.block.BlockJukebox;
 import net.minecraft.block.state.IBlockState;
@@ -44,7 +45,9 @@ import java.util.*;
 
 import static com.origins_eternity.sanity.Sanity.MOD_ID;
 import static com.origins_eternity.sanity.capability.Capabilities.SANITY;
+import static com.origins_eternity.sanity.config.Configuration.Effect;
 import static com.origins_eternity.sanity.config.Configuration.Mechanics;
+import static com.origins_eternity.sanity.content.entity.ShadowMonster.spawnShadow;
 import static com.origins_eternity.sanity.utils.Utils.*;
 import static mod.acgaming.foodspoiling.logic.FSLogic.canRot;
 
@@ -159,21 +162,53 @@ public class CommonEvent {
         }
     }
 
+    private static final Map<UUID, Integer> PLAYER_COOLDOWN = new HashMap<>();
+    private static final Map<UUID, Integer> PLAYER_SHADOW = new HashMap<>();
+
+    public static void onShadowDeath(ShadowMonster shadow) {
+        UUID uuid = shadow.getPlayerId();
+        if (uuid == null) return;
+        EntityPlayer player = shadow.world.getPlayerEntityByUUID(uuid);
+        if (player != null) {
+            PLAYER_COOLDOWN.put(uuid, player.ticksExisted + player.world.rand.nextInt(320) + 640);
+        } else {
+            PLAYER_COOLDOWN.remove(uuid);
+        }
+        PLAYER_SHADOW.remove(uuid);
+    }
+
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
         EntityPlayer player = event.player;
-        if (!player.isSpectator() && !player.isCreative()) {
-            if (event.phase != TickEvent.Phase.END) return;
-            ISanity sanity = player.getCapability(SANITY, null);
-            if (player.ticksExisted % 10 == 0 && !player.world.isRemote) {
-                double value = tickPlayer(player);
-                if (value > 0) {
-                    sanity.recoverSanity(value);
-                } else if (value < 0) {
-                    sanity.consumeSanity(-value);
+        ISanity sanity = player.getCapability(SANITY, null);
+        boolean invalidPlayer = player.isCreative() || player.isSpectator();
+        boolean shouldActive = !invalidPlayer && validDimension(player.dimension);
+        if (sanity.getEnable() != shouldActive) {
+            sanity.setEnable(shouldActive);
+            return;
+        }
+        if (shouldActive && player.ticksExisted % 10 == 0 && !player.world.isRemote) {
+            double value = tickPlayer(player);
+            if (value > 0) {
+                sanity.recoverSanity(value);
+            } else if (value < 0) {
+                sanity.consumeSanity(-value);
+            }
+            sanity.removeCoolDown();
+            syncSanity(player);
+            if (sanity.getSanity() < Effect.shadow) {
+                UUID uuid = player.getUniqueID();
+                if (!PLAYER_SHADOW.containsKey(uuid)) {
+                    int cooldownEnd = PLAYER_COOLDOWN.getOrDefault(uuid, 0);
+                    if (player.ticksExisted < cooldownEnd) {
+                        return;
+                    }
+                    int entityID = spawnShadow(player);
+                    if (entityID != -1) {
+                        PLAYER_SHADOW.put(uuid, entityID);
+                    }
                 }
-                sanity.removeCoolDown();
-                syncSanity(player);
             }
         }
     }
@@ -207,7 +242,7 @@ public class CommonEvent {
         EntityPlayer player = event.player;
         if (!player.isCreative() && !player.world.isRemote) {
             ISanity sanity = player.getCapability(SANITY, null);
-            sanity.setEnable(Mechanics.blacklist ? Arrays.stream(Mechanics.dimensions).noneMatch(num -> num == player.dimension) : Arrays.stream(Mechanics.dimensions).anyMatch(num -> num == player.dimension));
+            sanity.setEnable(validDimension(player.dimension));
             sanity.consumeSanity(Mechanics.trip);
         }
     }
@@ -235,6 +270,9 @@ public class CommonEvent {
                     }
                     sanity.setCoolDown(20);
                 }
+            }
+            if (event.getEntity() instanceof ShadowMonster) {
+                onShadowDeath((ShadowMonster) event.getEntity());
             }
         }
     }
@@ -268,17 +306,18 @@ public class CommonEvent {
         }
     }
 
-    public static final Map<BlockPos, JukeboxData> PLAYING_JUKEBOXES = new HashMap<>();
+    private static final Map<BlockPos, JukeboxData> PLAYING_JUKEBOXES = new HashMap<>();
 
     @SubscribeEvent
     public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
         World world = event.getWorld();
         if (!world.isRemote) {
             BlockPos pos = event.getPos();
+            if (PLAYING_JUKEBOXES.containsKey(pos)) return;
             if (world.getBlockState(pos).getBlock().equals(Blocks.JUKEBOX)
                     && event.getItemStack().getItem() instanceof ItemRecord) {
                 int num = stackMatched(event.getItemStack(), Mechanics.records);
-                if (num != -1) {
+                if (num != -1 && !PLAYING_JUKEBOXES.containsKey(pos)) {
                     String[] args = Mechanics.records[num].split(";");
                     double value = Double.parseDouble(args[1]);
                     int duration = Integer.parseInt(args[2]);
@@ -287,7 +326,7 @@ public class CommonEvent {
                             pos.getX() + 0.5 + Mechanics.jukebox, pos.getY() + 0.5 + Mechanics.jukebox, pos.getZ() + 0.5 + Mechanics.jukebox
                     );
                     List<EntityPlayer> players = new ArrayList<>(world.getEntitiesWithinAABB(EntityPlayer.class, box));
-                    PLAYING_JUKEBOXES.putIfAbsent(pos, new JukeboxData(players, value, duration, world.getTotalWorldTime()));
+                    PLAYING_JUKEBOXES.put(pos, new JukeboxData(players, value, duration, world.getTotalWorldTime()));
                 }
             }
         }
@@ -298,27 +337,27 @@ public class CommonEvent {
         if (event.phase != TickEvent.Phase.END) return;
         World world = event.world;
         if (!world.isRemote && world.getTotalWorldTime() % 10 == 0) {
-            PLAYING_JUKEBOXES.keySet().removeIf(pos -> {
+            PLAYING_JUKEBOXES.entrySet().removeIf(entry -> {
+                BlockPos pos = entry.getKey();
+                JukeboxData data = entry.getValue();
                 if (!world.isBlockLoaded(pos)) return true;
                 IBlockState state = world.getBlockState(pos);
-                return !state.getBlock().equals(Blocks.JUKEBOX) || !state.getValue(BlockJukebox.HAS_RECORD);
-            });
-
-            PLAYING_JUKEBOXES.keySet().removeIf(pos -> {
-                JukeboxData data = PLAYING_JUKEBOXES.get(pos);
+                if (!state.getBlock().equals(Blocks.JUKEBOX) || !state.getValue(BlockJukebox.HAS_RECORD)) {
+                    return true;
+                }
                 return world.getTotalWorldTime() - data.startTime > data.duration * 20L;
             });
 
-            for (BlockPos pos : PLAYING_JUKEBOXES.keySet()) {
-                JukeboxData data = PLAYING_JUKEBOXES.get(pos);
-                for (EntityPlayer player: data.players) {
+            for (Map.Entry<BlockPos, JukeboxData> entry : PLAYING_JUKEBOXES.entrySet()) {
+                BlockPos pos = entry.getKey();
+                JukeboxData data = entry.getValue();
+                for (EntityPlayer player : data.players) {
                     if (player.getDistanceSq(pos) <= Mechanics.jukebox * Mechanics.jukebox) {
-                        double value = data.value;
                         ISanity sanity = player.getCapability(SANITY, null);
-                        if (value > 0) {
-                            sanity.recoverSanity(value);
-                        } else if (value < 0) {
-                            sanity.consumeSanity(-value);
+                        if (data.value > 0) {
+                            sanity.recoverSanity(data.value);
+                        } else if (data.value < 0) {
+                            sanity.consumeSanity(-data.value);
                         }
                     }
                 }
@@ -329,12 +368,10 @@ public class CommonEvent {
     @SubscribeEvent
     public static void onPlayerLoggedOut(PlayerLoggedOutEvent event) {
         EntityPlayer player = event.player;
-        for (JukeboxData data : PLAYING_JUKEBOXES.values()) {
-            data.players.remove(player);
-        }
+        PLAYING_JUKEBOXES.values().forEach(data -> data.players.remove(player));
     }
 
-    public static class JukeboxData {
+    private static class JukeboxData {
         public List<EntityPlayer> players;
         public double value;
         public int duration;

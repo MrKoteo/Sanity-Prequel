@@ -1,20 +1,11 @@
 package com.origins_eternity.sanity.event;
 
 import com.origins_eternity.sanity.capability.sanity.ISanity;
-import com.origins_eternity.sanity.content.entity.FakeEntity;
+import com.origins_eternity.sanity.content.shader.SanityShader;
 import com.origins_eternity.sanity.content.sound.InSanity;
-import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.renderer.EntityRenderer;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -27,9 +18,9 @@ import static com.origins_eternity.sanity.Sanity.MOD_ID;
 import static com.origins_eternity.sanity.capability.Capabilities.SANITY;
 import static com.origins_eternity.sanity.config.Configuration.Effect;
 import static com.origins_eternity.sanity.config.Configuration.Overlay;
-import static com.origins_eternity.sanity.content.sound.Sounds.INSANITY;
-import static com.origins_eternity.sanity.utils.Utils.findSurface;
+import static com.origins_eternity.sanity.content.entity.FakeEntity.spawnFakeEntity;
 import static com.origins_eternity.sanity.utils.Utils.isAwake;
+import static com.origins_eternity.sanity.utils.Utils.playRandomSound;
 import static com.origins_eternity.sanity.utils.proxy.ClientProxy.mc;
 
 @SideOnly(Side.CLIENT)
@@ -37,43 +28,53 @@ import static com.origins_eternity.sanity.utils.proxy.ClientProxy.mc;
 public class ClientEvent {
     private static int sound;
     private static int ghost;
-    private static InSanity insanity;
-    private static boolean preloaded;
-    public static boolean enabled;
+    private static int whisper;
     public static int up = -1;
     public static int down = -1;
     public static int glow = -1;
-    public static float value = -1;
     public static int flash = -1;
+    private static float value = -1;
+    private static boolean preloaded;
+    private static InSanity insanity;
 
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.side == Side.CLIENT && event.phase == TickEvent.Phase.END) {
             EntityPlayer player = event.player;
-            if (!player.isCreative() && !player.isSpectator() && player == mc().player) {
+            if (player == mc().player) {
                 ISanity sanity = player.getCapability(SANITY, null);
-                update(sanity);
-                if (!sanity.getEnable() || isAwake(player)) return;
-                if (player.ticksExisted % 20 == 0) {
+                if (!sanity.getEnable()) return;
+                if (up > -1) up--;
+                if (down > -1) down--;
+                if (glow > -1) glow--;
+                if (flash > 0) flash--;
+                if (player.ticksExisted % 10 == 0) {
+                    update(sanity);
+                    if (isAwake(player)) return;
                     Random rand = player.world.rand;
                     if (value < Effect.sound) {
                         if (sound > 0) {
                             sound--;
-                        } else if (playRandomSound(player, rand)) {
-                            sound = rand.nextInt(30) + 40;
+                        } else if (playRandomSound(player)) {
+                            sound = (rand.nextInt((int) value + 1) + 64);
+                            ghost += 32;
                         }
                     }
                     if (value < Effect.ghost) {
                         if (ghost > 0) {
                             ghost--;
-                        } else if (spawnFakeEntity(player, rand)) {
-                            ghost = rand.nextInt(10) + 20;
+                        } else if (spawnFakeEntity(player)) {
+                            ghost = (rand.nextInt((int) value + 1) + 64);
+                            sound += 32;
                         }
                     }
                     if (value < Effect.whisper) {
-                        if (!mc().getSoundHandler().isSoundPlaying(insanity)) {
-                            insanity = new InSanity(INSANITY, player);
+                        if (whisper > 0) {
+                            whisper--;
+                        } else {
+                            insanity = new InSanity(player, 1 - value / Effect.whisper);
                             mc().getSoundHandler().playSound(insanity);
+                            whisper = rand.nextInt((int) value + 1) + 96;
                         }
                     }
                 }
@@ -85,72 +86,37 @@ public class ClientEvent {
     public static void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.side == Side.CLIENT && event.phase == TickEvent.Phase.END) {
             if (!preloaded) {
-                PositionedSoundRecord sound = PositionedSoundRecord.getMasterRecord(INSANITY, 0F);
-                mc().getSoundHandler().playSound(sound);
-                mc().addScheduledTask(() ->
-                        mc().getSoundHandler().stopSound(sound)
-                );
+                SoundHandler soundHandler = mc().getSoundHandler();
+                for (int i = 0; i < 6; i++) {
+                    InSanity sound = new InSanity(mc().player, 0.01f);
+                    soundHandler.playSound(sound);
+                }
                 preloaded = true;
             }
         }
     }
 
-    private static final String LEVEL1 = "shaders/post/" + Effect.level1.split(";")[0];
-    private static final String LEVEL2 = "shaders/post/" + Effect.level2.split(";")[0];
-    private static final String LEVEL3 = "shaders/post/" + Effect.level3.split(";")[0];
-
-    private static final int num1 = Integer.parseInt(Effect.level1.split(";")[1]);
-    private static final int num2 = Integer.parseInt(Effect.level2.split(";")[1]);
-    private static final int num3 = Integer.parseInt(Effect.level3.split(";")[1]);
-
     @SubscribeEvent
-    public static void onRenderTick(TickEvent.RenderTickEvent event) {
-        EntityPlayer player = mc().player;
-        if (Effect.shader && event.phase == TickEvent.Phase.END && player != null && OpenGlHelper.shadersSupported) {
-            ISanity sanity = player.getCapability(SANITY, null);
-            EntityRenderer renderer = mc().entityRenderer;
-            if (!enabled || isAwake(player)) {
-                clearShader(renderer);
-            } else if (sanity.getSanity() < num3) {
-                useEffect(renderer, LEVEL3);
-            } else if (sanity.getSanity() < num2) {
-                useEffect(renderer, LEVEL2);
-            } else if (sanity.getSanity() < num1) {
-                useEffect(renderer, LEVEL1);
-            } else {
-                clearShader(renderer);
-            }
-        }
-    }
-
-    private static String current = "default";
-
-    private static void clearShader(EntityRenderer renderer) {
-        if (renderer.isShaderActive() && !current.equals("default")) {
-            renderer.stopUseShader();
-            current = "default";
-        }
-    }
-
-    private static void useEffect(EntityRenderer renderer, String name) {
-        if (!renderer.isShaderActive() || !current.equals(name)) {
-            renderer.loadShader(new ResourceLocation(name));
-            current = name;
+    public static void onRenderTick(RenderWorldLastEvent event) {
+        if (mc().player == null) return;
+        SanityShader shader = SanityShader.getInstance();
+        ISanity sanity = mc().player.getCapability(SANITY, null);
+        float value = sanity.getSanity();
+        if (value < Effect.shader) {
+            shader.load(mc().getFramebuffer());
+            shader.update(value / Effect.shader);
+            shader.render(event.getPartialTicks());
+        } else {
+            shader.reset();
         }
     }
 
     private static void update(ISanity sanity) {
-        enabled = sanity.getEnable();
-        if (!enabled) return;
         float current = sanity.getSanity();
         if (value == -1) {
             value = current;
             return;
         }
-        if (up > -1) up--;
-        if (down > -1) down--;
-        if (glow > -1) glow--;
-        if (flash > 0) flash--;
         if (current != value) {
             if (current < value && down <= 1) {
                 down = 59;
@@ -165,57 +131,5 @@ public class ClientEvent {
             }
             value = current;
         }
-    }
-
-    private static boolean playRandomSound(EntityPlayer player, Random rand) {
-        String[] args = Effect.sounds[rand.nextInt(Effect.sounds.length)].split(";");
-        ResourceLocation location = new ResourceLocation(args[0]);
-        if (SoundEvent.REGISTRY.containsKey(location)) {
-            SoundEvent sound = SoundEvent.REGISTRY.getObject(location);
-            if (args.length == 3) {
-                float volume = Float.parseFloat(args[1]);
-                float pitch = Float.parseFloat(args[2]);
-                player.playSound(sound, volume, pitch);
-                return true;
-            } else if (args.length == 5) {
-                float min_volume = Float.parseFloat(args[1]);
-                float max_volume = Float.parseFloat(args[2]);
-                float min_pitch = Float.parseFloat(args[3]);
-                float max_pitch = Float.parseFloat(args[4]);
-                float volume = min_volume + rand.nextFloat() * (max_volume - min_volume);
-                float pitch = min_pitch + rand.nextFloat() * (max_pitch - min_pitch);
-                player.playSound(sound, volume, pitch);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static boolean spawnFakeEntity(EntityPlayer player, Random rand) {
-        String[] args = Effect.ghosts[rand.nextInt(Effect.ghosts.length)].split(";");
-        ResourceLocation location = new ResourceLocation(args[0]);
-        if (EntityList.isRegistered(location) && args.length > 4) {
-            World world = player.world;
-            Entity entity = EntityList.createEntityByIDFromName(location, world);
-            if (entity instanceof EntityLivingBase) {
-                int min_radius = Integer.parseInt(args[1]);
-                int max_radius = Integer.parseInt(args[2]);
-                double radius = 0.5 + min_radius + world.rand.nextDouble() * (max_radius - min_radius);
-                double yawRad = Math.toRadians(player.rotationYaw + world.rand.nextDouble() * 120 - 60);
-                double x = (int) (player.posX - Math.sin(yawRad) * radius) + 0.5;
-                double z = (int) (player.posZ + Math.cos(yawRad) * radius) + 0.5;
-                double y = findSurface(world, new BlockPos(x, (int) player.posY + 5, z));
-                if (y == -1) return false;
-                int min_ticks = Integer.parseInt(args[3]);
-                int max_ticks = Integer.parseInt(args[4]);
-                int liveTicks = min_ticks + world.rand.nextInt(max_ticks - min_ticks);
-                FakeEntity fakeEntity = new FakeEntity(world, entity, liveTicks);
-                WorldClient clientWorld = (WorldClient) world;
-                fakeEntity.setPosition(x, y, z);
-                clientWorld.addEntityToWorld(fakeEntity.getEntityId(), fakeEntity);
-                return true;
-            }
-        }
-        return false;
     }
 }

@@ -9,9 +9,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class FakeEntityRender extends Render<FakeEntity> {
+public class FakeRender extends Render<FakeEntity> {
 
-    public FakeEntityRender(RenderManager renderManager) {
+    public FakeRender(RenderManager renderManager) {
         super(renderManager);
     }
 

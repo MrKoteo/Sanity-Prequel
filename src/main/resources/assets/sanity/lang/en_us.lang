@@ -11,6 +11,8 @@ potion.effect.composure=Potion of Composure
 splash_potion.effect.composure=Composure Splash Potion
 lingering_potion.effect.composure=Composure Lingering Potion
 
+entity.sanity.shadow_monster.name=Shadow Monster
+
 config.sanity.compat=Compat
 config.sanity.compat.tooltip=Mod Compat Options
 config.sanity.foodSpoiling=Food Spoiling
@@ -108,27 +110,25 @@ config.sanity.blood.tooltip=Enable blood overlay when sanity is lower than the v
 
 config.sanity.effects=Effects
 config.sanity.effects.tooltip=Effects Options
-config.sanity.shader=Shader Effects
-config.sanity.shader.tooltip=Whether to enable the shader effects.
-config.sanity.level1=Level1
-config.sanity.level1.tooltip=Set level1 shader and enable when sanity is lower than the value. ('shader;value')
-config.sanity.level2=Level2
-config.sanity.level2.tooltip=Set level2 shader and enable when sanity is lower than the value. ('shader;value')
-config.sanity.level3=Level3
-config.sanity.level3.tooltip=Set level3 shader and enable when sanity is lower than the value. ('shader;value')
-config.sanity.sound=Sound Effects
+config.sanity.shader=Shader
+config.sanity.shader.tooltip=Enable shader effects when sanity is lower than the value. (set this to -1 to disable)
+config.sanity.sound=Sound
 config.sanity.sound.tooltip=Play random sounds when sanity is lower than the value. (set this to -1 to disable)
-config.sanity.sounds=Random Sounds
+config.sanity.sounds=Random Sounds List
 config.sanity.sounds.tooltip=The list of sounds which will play randomly when sanity is low, including their volume and pitch values. ('sound;volume;pitch') | ('sound;min_volume;max_volume;min_pitch;max_pitch')
-config.sanity.ghost=Ghost Effects
+config.sanity.ghost=Ghost
 config.sanity.ghost.tooltip=Spawn ghosts (fake mobs) around player when sanity is lower than the value. (set this to -1 to disable)
-config.sanity.ghosts=Random Ghosts
+config.sanity.ghosts=Random Ghosts List
 config.sanity.ghosts.tooltip=The list of ghosts which will randomly appear in the player's view when sanity is low, including their spawn radius and ticks to live. ('ghost;min_radius;max_radius;min_ticks;max_ticks')
-config.sanity.whisper=Whisper Effects
+config.sanity.whisper=Whisper
 config.sanity.whisper.tooltip=Play whispering when sanity is lower than the value. (set this to -1 to disable)
+config.sanity.shadow=Shadow Monster
+config.sanity.shadow.tooltip=Spawn shadow monster near the player when sanity is lower than the value. (set this to -1 to disable)
 
 commands.sanity.usage=/sanity <add|remove|set> [player] <value>
 commands.sanity.disabled=The sanity was disabled in this dimension!
 
 sanity.subtitle.insanity=Whispers
 sanity.subtitle.leaves_rustle=Garland rustles
+sanity.subtitle.shadow_monster_hurt=Shadow Monster hurts
+sanity.subtitle.shadow_monster_ambient=Shadow Monster swishes

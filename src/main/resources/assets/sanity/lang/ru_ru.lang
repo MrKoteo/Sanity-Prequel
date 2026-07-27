@@ -11,6 +11,8 @@ potion.effect.composure=Зелье самообладания
 splash_potion.effect.composure=Взрывное зелье самообладания
 lingering_potion.effect.composure=Туманное зелье самообладания
 
+entity.sanity.shadow_monster.name=Shadow Monster
+
 config.sanity.compat=Compat
 config.sanity.compat.tooltip=Mod Compat Options
 config.sanity.foodSpoiling=Порча еды
@@ -108,27 +110,25 @@ config.sanity.blood.tooltip=Включать кровавый оверлей, к
 
 config.sanity.effects=Эффекты
 config.sanity.effects.tooltip=Настройки эффектов
-config.sanity.shader=Шейдерные эффекты
-config.sanity.shader.tooltip=Включать ли шейдерные эффекты.
-config.sanity.level1=Уровень 1
-config.sanity.level1.tooltip=Задать шейдер для уровня 1 и включать его, когда рассудок ниже этого значения. ('шейдер;значение')
-config.sanity.level2=Уровень 2
-config.sanity.level2.tooltip=Задать шейдер для уровня 2 и включать его, когда рассудок ниже этого значения. ('шейдер;значение')
-config.sanity.level3=Уровень 3
-config.sanity.level3.tooltip=Задать шейдер для уровня 3 и включать его, когда рассудок ниже этого значения. ('шейдер;значение')
-config.sanity.sound=Звуковые эффекты
+config.sanity.shader=Шейдерные
+config.sanity.shader.tooltip=Enable shader effects when sanity is lower than the value. (set this to -1 to disable)
+config.sanity.sound=Звуковые
 config.sanity.sound.tooltip=Воспроизводить случайные звуки, когда рассудок ниже этого значения. ( -1 для отключения)
-config.sanity.sounds=Случайные звуки
+config.sanity.sounds=Случайный список звуков
 config.sanity.sounds.tooltip=Список звуков, которые будут случайно воспроизводиться при низком рассудке, включая их громкость и высоту. ('звук;громкость;высота') | ('звук;мин_громкость;макс_громкость;мин_высота;макс_высота')
-config.sanity.ghost=Эффекты призраков
+config.sanity.ghost=призраков
 config.sanity.ghost.tooltip=Появляются призраки (фейковые мобы) вокруг игрока, когда рассудок ниже этого значения. ( -1 для отключения)
-config.sanity.ghosts=Случайные призраки
+config.sanity.ghosts=Случайный список призраков
 config.sanity.ghosts.tooltip=Список призраков, которые будут случайно появляться в поле зрения игрока при низком рассудке, включая радиус их появления и продолжительность. ('призрак;мин_радиус;макс_радиус;мин_тики;макс_тики')
-config.sanity.whisper=Эффекты шёпота
+config.sanity.whisper=шёпота
 config.sanity.whisper.tooltip=Воспроизводить шёпот, когда рассудок ниже этого значения. ( -1 для отключения)
+config.sanity.shadow=Shadow Monster
+config.sanity.shadow.tooltip=Spawn shadow monster near the player when sanity is lower than the value. (set this to -1 to disable)
 
 commands.sanity.usage=/sanity <add|remove|set> [игрок] <значение>
 commands.sanity.disabled=Рассудок отключён в этом измерении!
 
 sanity.subtitle.insanity=Шёпот
 sanity.subtitle.leaves_rustle=Шелест венка
+sanity.subtitle.shadow_monster_hurt=Shadow Monster hurts
+sanity.subtitle.shadow_monster_ambient=Shadow Monster swishes

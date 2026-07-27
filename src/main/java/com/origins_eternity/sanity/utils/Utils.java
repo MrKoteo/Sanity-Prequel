@@ -23,6 +23,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -32,13 +33,14 @@ import net.minecraftforge.fml.common.Loader;
 import toughasnails.api.TANCapabilities;
 import toughasnails.api.stat.capability.IThirst;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 import static com.origins_eternity.sanity.Sanity.packetHandler;
 import static com.origins_eternity.sanity.capability.Capabilities.SANITY;
-import static com.origins_eternity.sanity.config.Configuration.Compat;
-import static com.origins_eternity.sanity.config.Configuration.Mechanics;
+import static com.origins_eternity.sanity.config.Configuration.*;
 import static com.origins_eternity.sanity.content.tool.Umbrella.UMBRELLA;
 
 public class Utils {
@@ -186,11 +188,12 @@ public class Utils {
         for (EntityLivingBase entity: player.world.getEntitiesWithinAABB(EntityLivingBase.class, box)) {
             if (entity != null) {
                 int num = entityMatched(entity, 1);
-                if (num != -1) {
-                    if (!entities.contains(num)) {
-                        value += Double.parseDouble(Mechanics.entities[num].split(";")[1]);
-                        entities.add(num);
+                if (num != -1 && !entities.contains(num)) {
+                    if (entity instanceof EntityMob && !validMob(entity, player)) {
+                        continue;
                     }
+                    value += Double.parseDouble(Mechanics.entities[num].split(";")[1]);
+                    entities.add(num);
                     continue;
                 }
                 if (entity instanceof EntityTameable) {
@@ -202,7 +205,7 @@ public class Utils {
                     continue;
                 }
                 if (entity instanceof EntityMob) {
-                    if (!hasMob) {
+                    if (!hasMob && validMob(entity, player)) {
                         value -= Mechanics.mob;
                         hasMob = true;
                     }
@@ -210,10 +213,10 @@ public class Utils {
                 }
                 if (entity instanceof EntityPlayer && !(entity instanceof FakePlayer) && entity != player) {
                     ISanity sanity = entity.getCapability(SANITY, null);
-                    if (sanity.getSanity() >= 50 && !hasNormal) {
+                    if (sanity.getSanity() > 50 && !hasNormal) {
                         value += Mechanics.normal;
                         hasNormal = true;
-                    } else if (!hasAbnormal) {
+                    } else if (sanity.getSanity() < 20 && !hasAbnormal) {
                         value += Mechanics.abnormal;
                         hasAbnormal = true;
                     }
@@ -235,8 +238,17 @@ public class Utils {
         return false;
     }
 
+    private static boolean validMob(Entity entity, EntityPlayer player) {
+        EntityMob mob = (EntityMob) entity;
+        return mob.getAttackTarget() != null && mob.getAttackTarget().equals(player);
+    }
+
     public static boolean isAwake(EntityPlayer player) {
         return player.isPotionActive(Potions.Composure) || (Loader.isModLoaded("firstaid") && player.isPotionActive(EventHandler.MORPHINE));
+    }
+
+    public static boolean validDimension(int dimension) {
+        return Mechanics.blacklist ? Arrays.stream(Mechanics.dimensions).noneMatch(num -> num == dimension) : Arrays.stream(Mechanics.dimensions).anyMatch(num -> num == dimension);
     }
 
     public static int findSurface(World world, BlockPos pos) {
@@ -248,5 +260,30 @@ public class Utils {
             }
         }
         return -1;
+    }
+
+    public static boolean playRandomSound(EntityPlayer player) {
+        Random rand = player.world.rand;
+        String[] args = Effect.sounds[rand.nextInt(Effect.sounds.length)].split(";");
+        ResourceLocation location = new ResourceLocation(args[0]);
+        if (SoundEvent.REGISTRY.containsKey(location)) {
+            SoundEvent sound = SoundEvent.REGISTRY.getObject(location);
+            if (args.length == 3) {
+                float volume = Float.parseFloat(args[1]);
+                float pitch = Float.parseFloat(args[2]);
+                player.playSound(sound, volume, pitch);
+                return true;
+            } else if (args.length == 5) {
+                float min_volume = Float.parseFloat(args[1]);
+                float max_volume = Float.parseFloat(args[2]);
+                float min_pitch = Float.parseFloat(args[3]);
+                float max_pitch = Float.parseFloat(args[4]);
+                float volume = min_volume + rand.nextFloat() * (max_volume - min_volume);
+                float pitch = min_pitch + rand.nextFloat() * (max_pitch - min_pitch);
+                player.playSound(sound, volume, pitch);
+                return true;
+            }
+        }
+        return false;
     }
 }

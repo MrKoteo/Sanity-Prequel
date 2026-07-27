@@ -216,7 +216,7 @@ public class Configuration {
         @Config.Name("Entities")
         @Config.LangKey("config.sanity.entities")
         @Config.Comment("The list of entities which will decrease or increase sanity when players stay with it, attack it and kill it. ('entity;stay_value;attack_value;kill_value', use '*' to indicate the default value.)")
-        public String[] entities = new String[]{"minecraft:zombie_pigman;0.0;*;*", "minecraft:wither;*;*;10.0"};
+        public String[] entities = new String[]{"minecraft:wither;*;*;10.0", "sanity:shadow_monster;0.3;*;15.0"};
         
         @Config.Name("Equipments")
         @Config.LangKey("config.sanity.equipments")
@@ -266,62 +266,55 @@ public class Configuration {
         @Config.LangKey("config.sanity.shake")
         @Config.Comment("Make brain overlay shake on screen when sanity is lower than the value. (set this to -1 to disable)")
         @Config.RangeInt(min = -1, max = 100)
-        public int shake = 40;
+        public int shake = 30;
 
         @Config.Name("Blood Overlay")
         @Config.LangKey("config.sanity.blood")
         @Config.Comment("Enable blood overlay when sanity is lower than the value. (set this to -1 to disable)")
-        public int blood = 55;
+        @Config.RangeInt(min = -1, max = 100)
+        public int blood = 45;
     }
 
     public static class ConfigEffect {
         @Config.Name("Shader Effects")
         @Config.LangKey("config.sanity.shader")
-        @Config.Comment("Whether to enable the shader effects.")
-        public boolean shader = true;
+        @Config.Comment("Enable shader effects when sanity is lower than the value. (set this to -1 to disable)")
+        @Config.RangeInt(min = -1, max = 100)
+        public int shader = 60;
 
-        @Config.Name("Level1")
-        @Config.RequiresMcRestart
-        @Config.LangKey("config.sanity.level1")
-        @Config.Comment("Set level1 shader and enable when sanity is lower than the value. ('shader;value')")
-        public String level1 = "deconverge.json;60";
-
-        @Config.Name("Level2")
-        @Config.RequiresMcRestart
-        @Config.LangKey("config.sanity.level2")
-        @Config.Comment("Set level2 shader and enable when sanity is lower than the value. ('shader;value')")
-        public String level2 = "notch.json;35";
-
-        @Config.Name("Level3")
-        @Config.RequiresMcRestart
-        @Config.LangKey("config.sanity.level3")
-        @Config.Comment("Set level3 shader and enable when sanity is lower than the value. ('shader;value')")
-        public String level3 = "bits.json;10";
-
-        @Config.Name("Sound Effects")
+        @Config.Name("Sound")
         @Config.LangKey("config.sanity.sound")
         @Config.Comment("Play random sounds when sanity is lower than the value. (set this to -1 to disable)")
-        public int sound = 50;
+        @Config.RangeInt(min = -1, max = 100)
+        public int sound = 75;
 
-        @Config.Name("Random Sounds")
+        @Config.Name("Random Sounds List")
         @Config.LangKey("config.sanity.sounds")
         @Config.Comment("The list of sounds which will play randomly when sanity is low, including their volume and pitch values. ('sound;volume;pitch') | ('sound;min_volume;max_volume;min_pitch;max_pitch')")
         public String[] sounds = new String[]{"entity.creeper.primed;1.0;0.5", "entity.tnt.primed;1.0;0.5", "entity.skeleton.ambient;0.5;1.5;0.5;1.5", "entity.skeleton.step;1.0;0.5", "entity.zombie.ambient;0.5;1.5;0.5;1.5", "entity.zombie.step;1.0;0.5", "entity.enderman.ambient;0.5;1.5;0.5;1.5", "entity.hostile.big_fall;1.0;0.5", "block.chest.open;1.0;0.5", "block.chest.close;1.0;0.5", "block.wooden_door.open;1.0;0.5", "block.wooden_trapdoor.open;1.0;0.5", "entity.wolf.growl;0.5;1.5;0.5;1.5"};
 
-        @Config.Name("Ghost Effects")
+        @Config.Name("Ghost")
         @Config.LangKey("config.sanity.ghost")
         @Config.Comment("Spawn fake mobs around player when sanity is lower than the value. (set this to -1 to disable)")
-        public int ghost = 45;
+        @Config.RangeInt(min = -1, max = 100)
+        public int ghost = 30;
 
-        @Config.Name("Random Ghosts")
+        @Config.Name("Random Ghosts List")
         @Config.LangKey("config.sanity.ghosts")
         @Config.Comment("The list of ghosts which will randomly appear in the player's view, including their spawn radius and duration. ('ghost;min_radius;max_radius;min_ticks;max_ticks')")
-        public String[] ghosts = new String[]{"minecraft:creeper;1;5;20;100", "minecraft:skeleton;1;5;20;100", "minecraft:creeper;1;5;20;100", "minecraft:zombie;1;5;20;100", "minecraft:enderman;1;5;20;100"};
+        public String[] ghosts = new String[]{"minecraft:creeper;6;14;30;120", "minecraft:skeleton;6;14;30;120", "minecraft:creeper;6;14;30;120", "minecraft:zombie;6;14;30;120", "minecraft:enderman;6;14;30;120"};
 
-        @Config.Name("Whisper Effects")
+        @Config.Name("Whisper")
         @Config.LangKey("config.sanity.whisper")
         @Config.Comment("Play whispering when sanity is lower than the value. (set this to -1 to disable)")
-        public int whisper = 30;
+        @Config.RangeInt(min = -1, max = 100)
+        public int whisper = 45;
+
+        @Config.Name("Shadow Monster")
+        @Config.LangKey("config.sanity.shadow")
+        @Config.Comment("Spawn shadow monster near the player when sanity is lower than the value. (set this to -1 to disable)")
+        @Config.RangeInt(min = -1, max = 100)
+        public int shadow = 15;
     }
 
     @Mod.EventBusSubscriber(modid = MOD_ID)

@@ -12,19 +12,18 @@
 ![This is an image](https://s21.ax1x.com/2025/02/05/pEeKjN8.png)
 ### Potion
 **Add composure potion effect, which can recover 1 sanity every `60 >> amplifier` ticks. Brew any small flowers with an regeneration potion.**
+### Shadow Monster
+**Spawn near players with low sanity and chase them. It has extremely high health and speed, making it very difficult to defeat. Killing it can grant a large amount of sanity.**
 ## Features
 **Most feature support custom configurations. Turn to mod's config file for more information.**
 ### Effects
+- **Sanity < 75, players will experience auditory hallucinations. (support custom sound list)**
 - **Sanity < 60, at the edges of things, red, green, and blue seem to be separated in your eyes.**
-- **Sanity < 55, blood texture flicker on the screen when sanity decrease.**
-- **Sanity < 50, players will experience auditory hallucinations. (support custom sound list)**
-- **Sanity < 45, players experiences hallucinations and will see ghosts. (support custom ghost list)**
-- **Sanity < 40, brain overlay starts to shake.**
-- **Sanity < 35, there are a grid of small dots lies in your eyes. The world looks washed out...**
-- **Sanity < 30, whispers can be heard.**
-- **Sanity < 10, game's graphics are even more distorted, with details barely legible.**
+- **Sanity < 45, whispers can be heard and blood texture overlays on screen while sanity decreasing.**
+- **Sanity < 30, brain overlay starts to shake and some ghosts will spawn around players. (support custom ghost list).**
+- **Sanity < 15, shadow monster will spawn near the player, the world looks washed out...**
 
-![This is an image](https://s21.ax1x.com/2025/01/18/pEkiLJU.png)
+![This is an image](https://s41.ax1x.com/2026/07/27/pmR42eH.png)
 
 **Using potion of composure or morphine in First Aid mod grants temporary immunity to all negative effects.**
 ### Decrease Sanity
@@ -36,8 +35,8 @@
 - **Get hurt.**  
 - **Rain.**  
 - **Dark. (works when player doesn't have night vision effect)**  
-- **Around mobs. (within 5 blocks)**  
-- **Around players with sanity < 50. (within 5 blocks)**  
+- **Being chased by monsters. (within 5 blocks)**  
+- **Around players with sanity < 20. (within 5 blocks)**  
 - **Food spoiled in inventory. (works with Food Spoiling)**
 - **Choking.**
 - **Change dimensions.**
@@ -51,7 +50,7 @@
 - **Gain advancements.**  
 - **Complete quests. (support FTB Quests)**  
 - **Stay with pets. (within 5 blocks)**  
-- **Around players with sanity ≥ 50. (within 5 blocks)**  
+- **Around players with sanity > 50. (within 5 blocks)**  
 - **Kill mobs.**  
 - **Composure effect.**
 - **Campfire. (works with Pyrotech)**

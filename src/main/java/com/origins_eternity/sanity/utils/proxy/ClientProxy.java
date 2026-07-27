@@ -1,7 +1,7 @@
 package com.origins_eternity.sanity.utils.proxy;
 
 import com.origins_eternity.sanity.content.entity.FakeEntity;
-import com.origins_eternity.sanity.content.render.FakeEntityRender;
+import com.origins_eternity.sanity.content.render.FakeRender;
 import com.origins_eternity.sanity.content.render.Overlay;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
@@ -18,7 +18,7 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void preInit(FMLPreInitializationEvent event) {
         super.preInit(event);
-        RenderingRegistry.registerEntityRenderingHandler(FakeEntity.class, FakeEntityRender::new);
+        RenderingRegistry.registerEntityRenderingHandler(FakeEntity.class, FakeRender::new);
     }
 
     @Override

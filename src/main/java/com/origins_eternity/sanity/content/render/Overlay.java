@@ -1,5 +1,7 @@
 package com.origins_eternity.sanity.content.render;
 
+import com.origins_eternity.sanity.capability.Capabilities;
+import com.origins_eternity.sanity.capability.sanity.ISanity;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
@@ -18,6 +20,8 @@ import static com.origins_eternity.sanity.utils.proxy.ClientProxy.mc;
 
 @SideOnly(Side.CLIENT)
 public class Overlay extends Gui {
+    private float value;
+
     private static final ResourceLocation blood = new ResourceLocation(MOD_ID, "textures/gui/blood.png");
     public static final ResourceLocation indicator = new ResourceLocation(MOD_ID, "textures/gui/indicator.png");
 
@@ -25,21 +29,22 @@ public class Overlay extends Gui {
     public void onRenderGameOverlay(RenderGameOverlayEvent.Post event) {
         if (event.getType() == RenderGameOverlayEvent.ElementType.EXPERIENCE) {
             EntityPlayerSP player = mc().player;
-            if (!player.isCreative() && !player.isSpectator()) {
-                int posX = event.getResolution().getScaledWidth();
-                int posY = event.getResolution().getScaledHeight();
-                GlStateManager.pushMatrix();
-                GlStateManager.enableBlend();
-                drawBlood(player, posX, posY);
-                int offX = ((player.getPrimaryHand() == EnumHandSide.RIGHT && !player.getHeldItemOffhand().isEmpty())
-                        || (player.getPrimaryHand() == EnumHandSide.LEFT && player.getHeldItemOffhand().isEmpty())) && Overlay.check ? 97 - Overlay.offX : -130 + Overlay.offX;
-                posX = posX / 2 + offX;
-                posY = posY - 29 - Overlay.offY;
-                drawBrain(player, posX, posY);
-                mc().getTextureManager().bindTexture(Gui.ICONS);
-                GlStateManager.disableBlend();
-                GlStateManager.popMatrix();
-            }
+            ISanity sanity = player.getCapability(Capabilities.SANITY ,null);
+            if (!sanity.getEnable()) return;
+            value = sanity.getSanity();
+            int posX = event.getResolution().getScaledWidth();
+            int posY = event.getResolution().getScaledHeight();
+            GlStateManager.pushMatrix();
+            GlStateManager.enableBlend();
+            drawBlood(player, posX, posY);
+            int offX = ((player.getPrimaryHand() == EnumHandSide.RIGHT && !player.getHeldItemOffhand().isEmpty())
+                    || (player.getPrimaryHand() == EnumHandSide.LEFT && player.getHeldItemOffhand().isEmpty())) && Overlay.check ? 97 - Overlay.offX : -130 + Overlay.offX;
+            posX = posX / 2 + offX;
+            posY = posY - 29 - Overlay.offY;
+            drawBrain(player, posX, posY);
+            mc().getTextureManager().bindTexture(Gui.ICONS);
+            GlStateManager.disableBlend();
+            GlStateManager.popMatrix();
         }
     }
 
@@ -66,12 +71,12 @@ public class Overlay extends Gui {
                 drawTexturedModalRect(posX, posY, 34, 0, 33, 24);
             }
             drawTexturedModalRect(posX + 1, posY + consume + 1, 68, consume + 1, 31, 22 - consume);
-            if (down > -1) {
-                posY += down % 20 < 10 ? 1 : 0;
-                drawTexturedModalRect(posX + 13, posY + 8, 100, 8, 6, 7);
-            } else if (up > -1) {
+            if (up > -1) {
                 posY -= up % 20 < 10 ? 1 : 0;
                 drawTexturedModalRect(posX + 13, posY + 9, 107, 8, 6, 7);
+            } else if (down > -1) {
+                posY += down % 20 < 10 ? 1 : 0;
+                drawTexturedModalRect(posX + 13, posY + 8, 100, 8, 6, 7);
             }
         }
     }
