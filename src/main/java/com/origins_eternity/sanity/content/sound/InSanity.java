@@ -8,8 +8,6 @@ import net.minecraft.util.SoundCategory;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.Random;
-
 import static com.origins_eternity.sanity.config.Configuration.Effect;
 import static com.origins_eternity.sanity.content.sound.Sounds.INSANITY;
 import static com.origins_eternity.sanity.utils.proxy.ClientProxy.mc;
@@ -17,7 +15,6 @@ import static com.origins_eternity.sanity.utils.proxy.ClientProxy.mc;
 @SideOnly(Side.CLIENT)
 public class InSanity extends MovingSound {
     private final EntityPlayer player;
-    private int count;
 
     public InSanity(EntityPlayer player, float volume) {
         super(INSANITY, SoundCategory.HOSTILE);
@@ -28,9 +25,6 @@ public class InSanity extends MovingSound {
             this.xPosF = (float) player.posX;
             this.yPosF = (float) player.posY;
             this.zPosF = (float) player.posZ;
-
-            Random rand = player.world.rand;
-            this.count = rand.nextInt(520) + 180;
         }
     }
 
@@ -41,9 +35,9 @@ public class InSanity extends MovingSound {
             return;
         }
         ISanity sanity = this.player.getCapability(Capabilities.SANITY, null);
-        if (sanity.getSanity() >= Effect.whisper || !sanity.getEnable() || count < 0) {
+        if (sanity.getSanity() >= Effect.whisper || !sanity.getEnable()) {
             if (this.volume > 0f) {
-                volume -= 0.02f;
+                this.volume -= 0.02f;
             } else {
                 this.donePlaying = true;
                 return;
@@ -52,6 +46,5 @@ public class InSanity extends MovingSound {
         this.xPosF = (float) this.player.posX;
         this.yPosF = (float) this.player.posY;
         this.zPosF = (float) this.player.posZ;
-        count--;
     }
 }

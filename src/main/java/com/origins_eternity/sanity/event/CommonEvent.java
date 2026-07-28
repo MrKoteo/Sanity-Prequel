@@ -200,8 +200,8 @@ public class CommonEvent {
             if (sanity.getSanity() < Effect.shadow) {
                 UUID uuid = player.getUniqueID();
                 if (!PLAYER_SHADOW.containsKey(uuid)) {
-                    int cooldownEnd = PLAYER_COOLDOWN.getOrDefault(uuid, 0);
-                    if (player.ticksExisted < cooldownEnd) {
+                    int spawnTick = PLAYER_COOLDOWN.getOrDefault(uuid, 0);
+                    if (player.ticksExisted < spawnTick) {
                         return;
                     }
                     int entityID = spawnShadow(player);

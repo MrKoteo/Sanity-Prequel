@@ -34,7 +34,6 @@ public class ClientEvent {
     public static int glow = -1;
     public static int flash = -1;
     private static float value = -1;
-    private static boolean preloaded;
     private static InSanity insanity;
 
     @SubscribeEvent
@@ -69,12 +68,15 @@ public class ClientEvent {
                         }
                     }
                     if (value < Effect.whisper) {
-                        if (whisper > 0) {
-                            whisper--;
-                        } else {
-                            insanity = new InSanity(player, 1 - value / Effect.whisper);
-                            mc().getSoundHandler().playSound(insanity);
-                            whisper = rand.nextInt((int) value + 1) + 96;
+                        SoundHandler soundHandler = mc().getSoundHandler();
+                        if (!soundHandler.isSoundPlaying(insanity)) {
+                            if (whisper > 0) {
+                                whisper--;
+                            } else {
+                                insanity = new InSanity(player, 1.2f - value / Effect.whisper);
+                                soundHandler.playSound(insanity);
+                                whisper = rand.nextInt((int) value + 1) + 96;
+                            }
                         }
                     }
                 }
@@ -85,13 +87,12 @@ public class ClientEvent {
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.side == Side.CLIENT && event.phase == TickEvent.Phase.END) {
-            if (!preloaded) {
+            if (insanity == null) {
                 SoundHandler soundHandler = mc().getSoundHandler();
                 for (int i = 0; i < 6; i++) {
-                    InSanity sound = new InSanity(mc().player, 0.01f);
-                    soundHandler.playSound(sound);
+                    insanity = new InSanity(mc().player, 0.001f);
+                    soundHandler.playSound(insanity);
                 }
-                preloaded = true;
             }
         }
     }
