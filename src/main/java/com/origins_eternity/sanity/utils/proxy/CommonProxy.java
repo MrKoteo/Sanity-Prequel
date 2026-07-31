@@ -18,6 +18,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import software.bernie.geckolib3.GeckoLib;
 
 import static com.origins_eternity.sanity.Sanity.packetHandler;
+import static com.origins_eternity.sanity.compat.SanityBrew.addSanityBrew;
 import static com.origins_eternity.sanity.content.potion.Potions.registerPotionRecipes;
 
 public class CommonProxy {
@@ -39,6 +40,9 @@ public class CommonProxy {
         }
         if (Loader.isModLoaded("nutrition")) {
             MinecraftForge.EVENT_BUS.register(Nutrition.class);
+        }
+        if (Loader.isModLoaded("botania")) {
+            addSanityBrew();
         }
         registerPotionRecipes();
     }

@@ -16,7 +16,7 @@ import static com.origins_eternity.sanity.content.render.Overlay.indicator;
 
 public class Composure extends Potion {
     public Composure(String name) {
-        super(false, 0x178EB0);
+        super(false, 0xFF178EB0);
         setPotionName("effect." + name);
         setRegistryName(name);
         setBeneficial();
@@ -35,7 +35,7 @@ public class Composure extends Potion {
 
     @Override
     public boolean isReady(int duration, int amplifier) {
-        int interval = 60 >> amplifier;
+        int interval = 40 >> amplifier;
         if (interval > 0) {
             return duration % interval == 0;
         } else {

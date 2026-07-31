@@ -11,7 +11,7 @@
 **Holding an umbrella can prevent player from decreasing sanity and damaging garland by rain. Umbrella has 120 durability, which will damage from lightning, fire, explosion. And break or attack can also damage it.**
 ![This is an image](https://s21.ax1x.com/2025/02/05/pEeKjN8.png)
 ### Potion
-**Add composure potion effect, which can recover 1 sanity every `60 >> amplifier` ticks. Brew any small flowers with an regeneration potion.**
+**Add composure potion effect, which can recover 1 sanity every `40 >> amplifier` ticks. Brew any small flowers with an regeneration potion.**
 ### Shadow Monster
 **Spawn near players with low sanity and chase them. It has extremely high health and speed, making it very difficult to defeat. Killing it can grant a large amount of sanity.**
 ## Features
@@ -60,7 +60,9 @@
 ![This is an image](https://s21.ax1x.com/2025/01/17/pEFjK81.png)
 ## Combat
 **All compatibility features will be enabled automatically when the mod is installed.**
-### CraftTweaker
+### Botania
+**Add a new type of botania brew called Composure, which players can brew it in the Botanical Brewery. Using it grants effects of Composure II (1:00).**
+### CraftTweker
 **Add a ZenExpansion for [IPlayer](https://docs.blamejared.com/1.12/en/Vanilla/Players/IPlayer) (`sanity`), which can return player's sanity value as float. And you can also use it to modify a player's sanity value like this:`player.sanity += 2.5`. Developers can call this method on any [IPlayer](https://docs.blamejared.com/1.12/en/Vanilla/Players/IPlayer) object, including its subtypes.**
 ```zenscript
 import crafttweaker.event.BlockHarvestDropsEvent;

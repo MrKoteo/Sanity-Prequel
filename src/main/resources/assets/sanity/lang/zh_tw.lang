@@ -11,6 +11,8 @@ potion.effect.composure=鎮定藥水
 splash_potion.effect.composure=噴濺型鎮定藥水
 lingering_potion.effect.composure=滯留型鎮定藥水
 
+sanity.brew.composure=鎮定
+
 entity.sanity.shadow_monster.name=影怪
 
 config.sanity.compat=兼容

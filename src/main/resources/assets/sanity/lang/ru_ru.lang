@@ -11,6 +11,8 @@ potion.effect.composure=Зелье самообладания
 splash_potion.effect.composure=Взрывное зелье самообладания
 lingering_potion.effect.composure=Туманное зелье самообладания
 
+sanity.brew.composure=Composure
+
 entity.sanity.shadow_monster.name=Shadow Monster
 
 config.sanity.compat=Compat

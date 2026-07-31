@@ -5,7 +5,6 @@ import com.origins_eternity.sanity.content.shader.SanityShader;
 import com.origins_eternity.sanity.content.sound.InSanity;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -47,7 +46,7 @@ public class ClientEvent {
                 if (down > -1) down--;
                 if (glow > -1) glow--;
                 if (flash > 0) flash--;
-                if (player.ticksExisted % 10 == 0) {
+                if (player.ticksExisted % 20 == 0) {
                     update(sanity);
                     if (isAwake(player)) return;
                     Random rand = player.world.rand;
@@ -56,15 +55,13 @@ public class ClientEvent {
                             sound--;
                         } else if (playRandomSound(player)) {
                             sound = (rand.nextInt((int) value + 1) + 64);
-                            ghost += 32;
                         }
                     }
                     if (value < Effect.ghost) {
                         if (ghost > 0) {
                             ghost--;
-                        } else if (spawnFakeEntity(player)) {
+                        } else if (spawnFakeEntity(player, 1 - (value / Effect.ghost) * 0.5f)) {
                             ghost = (rand.nextInt((int) value + 1) + 64);
-                            sound += 32;
                         }
                     }
                     if (value < Effect.whisper) {
@@ -73,9 +70,9 @@ public class ClientEvent {
                             if (whisper > 0) {
                                 whisper--;
                             } else {
-                                insanity = new InSanity(player, 1.2f - value / Effect.whisper);
+                                insanity = new InSanity(player, 1 - (value / Effect.whisper) * 0.8f);
                                 soundHandler.playSound(insanity);
-                                whisper = rand.nextInt((int) value + 1) + 96;
+                                whisper = rand.nextInt((int) value + 1) + 32;
                             }
                         }
                     }
@@ -98,17 +95,30 @@ public class ClientEvent {
     }
 
     @SubscribeEvent
-    public static void onRenderTick(RenderWorldLastEvent event) {
-        if (mc().player == null) return;
-        SanityShader shader = SanityShader.getInstance();
-        ISanity sanity = mc().player.getCapability(SANITY, null);
-        float value = sanity.getSanity();
-        if (value < Effect.shader) {
-            shader.load(mc().getFramebuffer());
-            shader.update(value / Effect.shader);
-            shader.render(event.getPartialTicks());
-        } else {
-            shader.reset();
+    public static void onRenderTick(TickEvent.RenderTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) {
+            SanityShader shader = SanityShader.getInstance();
+            if (mc().player == null || mc().world == null) {
+                shader.reset();
+                return;
+            }
+            ISanity sanity = mc().player.getCapability(SANITY, null);
+            if (!sanity.getEnable()) {
+                shader.unload();
+                return;
+            }
+            float value = sanity.getSanity();
+            if (value < Effect.shader) {
+                float strength = 1f - (value / Effect.shader);
+                if (strength > 0f) {
+                    if (!shader.isActive()) {
+                        shader.load();
+                    }
+                    shader.update(strength);
+                }
+            } else if (shader.isActive()) {
+                shader.unload();
+            }
         }
     }
 

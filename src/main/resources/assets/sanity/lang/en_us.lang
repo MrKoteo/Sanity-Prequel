@@ -11,6 +11,8 @@ potion.effect.composure=Potion of Composure
 splash_potion.effect.composure=Composure Splash Potion
 lingering_potion.effect.composure=Composure Lingering Potion
 
+sanity.brew.composure=Composure
+
 entity.sanity.shadow_monster.name=Shadow Monster
 
 config.sanity.compat=Compat
