@@ -2,7 +2,6 @@ package com.origins_eternity.sanity.event;
 
 import baubles.api.BaubleType;
 import baubles.api.BaublesApi;
-import com.origins_eternity.sanity.capability.Capabilities;
 import com.origins_eternity.sanity.capability.sanity.ISanity;
 import com.origins_eternity.sanity.capability.sanity.Sanity;
 import com.origins_eternity.sanity.compat.FoodSpoiling;
@@ -57,7 +56,7 @@ public class CommonEvent {
     public static void onAttachCapability(AttachCapabilitiesEvent<Entity> event) {
         Entity entity = event.getObject();
         if (entity instanceof EntityPlayer) {
-            event.addCapability(new ResourceLocation(MOD_ID, "sanity"), new Sanity.SanityProvider(Capabilities.SANITY));
+            event.addCapability(new ResourceLocation(MOD_ID, "sanity"), new Sanity.SanityProvider(SANITY));
         }
     }
 
@@ -66,7 +65,7 @@ public class CommonEvent {
         EntityPlayer old = event.getOriginal();
         EntityPlayer clone = event.getEntityPlayer();
         if (!clone.world.isRemote) {
-            Capability<ISanity> capability = Capabilities.SANITY;
+            Capability<ISanity> capability = SANITY;
             ISanity origin = old.getCapability(capability, null);
             ISanity present = clone.getCapability(capability, null);
             if (!event.isWasDeath() || !Mechanics.reset) {
@@ -80,18 +79,20 @@ public class CommonEvent {
         if (event.getEntityLiving() instanceof EntityPlayerMP) {
             EntityPlayerMP player = (EntityPlayerMP) event.getEntityLiving();
             if (!player.isCreative()) {
+                double value = 0;
+                ItemStack stack = event.getItem();
+                int num = stackMatched(stack, Mechanics.items);
+                if (num != -1) {
+                    value = Double.parseDouble(Mechanics.items[num].split(";")[1]);
+                } else if (stack.getItem() instanceof ItemFood) {
+                    value = Mechanics.food;
+                }
                 ISanity sanity = player.getCapability(SANITY, null);
-                int num = stackMatched(event.getItem(), Mechanics.items);
-                if (num == -1) return;
-                double value = Double.parseDouble(Mechanics.items[num].split(";")[1]);
                 if (value > 0) {
                     if (Loader.isModLoaded("foodspoiling")) {
-                        ItemStack stack = event.getItem();
-                        if (stack.getItem() instanceof ItemFood) {
-                            if (canRot(stack) == EnumActionResult.SUCCESS && FSData.hasCreationTime(stack)) {
-                                double spoilage = FoodSpoiling.getPercentage(event.getItem(), player) / 100.0;
-                                value *= spoilage;
-                            }
+                        if (canRot(stack) == EnumActionResult.SUCCESS && FSData.hasCreationTime(stack)) {
+                            double spoilage = FoodSpoiling.getPercentage(event.getItem(), player) / 100.0;
+                            value *= spoilage;
                         }
                     }
                     sanity.recoverSanity(value);

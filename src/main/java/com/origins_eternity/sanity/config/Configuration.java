@@ -162,6 +162,12 @@ public class Configuration {
         @Config.RangeDouble(min = 0.0, max = 0.5)
         public double pet = 0.2;
 
+        @Config.Name("Food")
+        @Config.LangKey("config.sanity.food")
+        @Config.Comment("The sanity to increase when players eat foods that are not in the item list.")
+        @Config.RangeDouble(min = 0.0, max = 0.5)
+        public double food = 1.0;
+
         @Config.Name("Composure")
         @Config.LangKey("config.sanity.composure")
         @Config.Comment("The sanity to increase by the composure effect at each interval.")

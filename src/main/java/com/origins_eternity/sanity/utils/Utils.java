@@ -12,6 +12,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.passive.EntityTameable;
@@ -186,14 +187,13 @@ public class Utils {
         boolean hasAbnormal = false;
 
         for (EntityLivingBase entity: player.world.getEntitiesWithinAABB(EntityLivingBase.class, box)) {
-            if (entity != null) {
+            if (entity instanceof EntityLiving) {
                 int num = entityMatched(entity, 1);
                 if (num != -1 && !entities.contains(num)) {
-                    if (entity instanceof EntityMob && !validMob(entity, player)) {
-                        continue;
+                    if (validMob((EntityLiving) entity, player)) {
+                        value += Double.parseDouble(Mechanics.entities[num].split(";")[1]);
+                        entities.add(num);
                     }
-                    value += Double.parseDouble(Mechanics.entities[num].split(";")[1]);
-                    entities.add(num);
                     continue;
                 }
                 if (entity instanceof EntityTameable) {
@@ -205,21 +205,19 @@ public class Utils {
                     continue;
                 }
                 if (entity instanceof EntityMob) {
-                    if (!hasMob && validMob(entity, player)) {
+                    if (!hasMob && validMob((EntityLiving) entity, player)) {
                         value -= Mechanics.mob;
                         hasMob = true;
                     }
-                    continue;
                 }
-                if (entity instanceof EntityPlayer && !(entity instanceof FakePlayer) && entity != player) {
-                    ISanity sanity = entity.getCapability(SANITY, null);
-                    if (sanity.getSanity() > 50 && !hasNormal) {
-                        value += Mechanics.normal;
-                        hasNormal = true;
-                    } else if (sanity.getSanity() < 20 && !hasAbnormal) {
-                        value += Mechanics.abnormal;
-                        hasAbnormal = true;
-                    }
+            } else if (entity instanceof EntityPlayer && !(entity instanceof FakePlayer) && entity != player) {
+                ISanity sanity = entity.getCapability(SANITY, null);
+                if (sanity.getSanity() > 50 && !hasNormal) {
+                    value += Mechanics.normal;
+                    hasNormal = true;
+                } else if (sanity.getSanity() < 20 && !hasAbnormal) {
+                    value += Mechanics.abnormal;
+                    hasAbnormal = true;
                 }
             }
         }
@@ -238,9 +236,8 @@ public class Utils {
         return false;
     }
 
-    private static boolean validMob(Entity entity, EntityPlayer player) {
-        EntityMob mob = (EntityMob) entity;
-        return mob.getAttackTarget() != null && mob.getAttackTarget().equals(player);
+    private static boolean validMob(EntityLiving living, EntityPlayer player) {
+        return living.getAttackTarget() instanceof EntityPlayer && living.getAttackTarget().equals(player);
     }
 
     public static boolean isAwake(EntityPlayer player) {
