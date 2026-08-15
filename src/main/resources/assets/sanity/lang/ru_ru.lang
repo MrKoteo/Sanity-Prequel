@@ -122,10 +122,14 @@ config.sanity.sounds=Случайный список звуков
 config.sanity.sounds.tooltip=Список звуков, которые будут случайно воспроизводиться при низком рассудке, включая их громкость и высоту. ('звук;громкость;высота') | ('звук;мин_громкость;макс_громкость;мин_высота;макс_высота')
 config.sanity.ghost=призраков
 config.sanity.ghost.tooltip=Появляются призраки (фейковые мобы) вокруг игрока, когда рассудок ниже этого значения. ( -1 для отключения)
+config.sanity.opacity=Ghost Opacity
+config.sanity.opacity.tooltip=Set minimum opacity of the ghost.
 config.sanity.ghosts=Случайный список призраков
 config.sanity.ghosts.tooltip=Список призраков, которые будут случайно появляться в поле зрения игрока при низком рассудке, включая радиус их появления и продолжительность. ('призрак;мин_радиус;макс_радиус;мин_тики;макс_тики')
 config.sanity.whisper=шёпота
 config.sanity.whisper.tooltip=Воспроизводить шёпот, когда рассудок ниже этого значения. ( -1 для отключения)
+config.sanity.interval=Whisper Interval
+config.sanity.interval.tooltip=Set maximum number of seconds between two whispers.
 config.sanity.shadow=Shadow Monster
 config.sanity.shadow.tooltip=Spawn shadow monster near the player when sanity is lower than the value. (set this to -1 to disable)
 

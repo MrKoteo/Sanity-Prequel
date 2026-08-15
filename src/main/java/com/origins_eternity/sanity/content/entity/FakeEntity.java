@@ -168,7 +168,7 @@ public class FakeEntity extends Entity {
                 int liveTicks = minTicks + world.rand.nextInt(maxTicks - minTicks);
 
                 FakeEntity fakeEntity = new FakeEntity(world, entity);
-                fakeEntity.setAlpha(alpha);
+                fakeEntity.setAlpha((float) Math.max(alpha, Effect.opacity));
                 fakeEntity.setLiveTicks(liveTicks);
                 fakeEntity.setPosition(x, y, z);
 

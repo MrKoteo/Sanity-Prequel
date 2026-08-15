@@ -72,7 +72,7 @@ public class ClientEvent {
                             } else {
                                 insanity = new InSanity(player, 1 - (value / Effect.whisper) * 0.8f);
                                 soundHandler.playSound(insanity);
-                                whisper = rand.nextInt((int) value + 1) + 32;
+                                whisper = Math.min(Effect.interval, rand.nextInt((int) value + 1) + 32);
                             }
                         }
                     }

@@ -305,6 +305,12 @@ public class Configuration {
         @Config.RangeInt(min = -1, max = 100)
         public int ghost = 30;
 
+        @Config.Name("Ghost Opacity")
+        @Config.LangKey("config.sanity.opacity")
+        @Config.Comment("Set minimum opacity of the ghost.")
+        @Config.RangeDouble(min = 0.0, max = 1.0)
+        public double opacity = 0.5;
+
         @Config.Name("Random Ghosts List")
         @Config.LangKey("config.sanity.ghosts")
         @Config.Comment("The list of ghosts which will randomly appear in the player's view, including their spawn radius and duration. ('ghost;min_radius;max_radius;min_ticks;max_ticks')")
@@ -315,6 +321,12 @@ public class Configuration {
         @Config.Comment("Play whispering when sanity is lower than the value. (set this to -1 to disable)")
         @Config.RangeInt(min = -1, max = 100)
         public int whisper = 45;
+
+        @Config.Name("Whisper Interval")
+        @Config.LangKey("config.sanity.interval")
+        @Config.Comment("Set maximum number of seconds between two whispers.")
+        @Config.RangeInt(min = 0, max = 132)
+        public int interval = 132;
 
         @Config.Name("Shadow Monster")
         @Config.LangKey("config.sanity.shadow")
