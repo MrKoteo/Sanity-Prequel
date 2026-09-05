@@ -66,7 +66,7 @@ public class Utils {
         if (player.getAir() < 90) {
             value -= Mechanics.choking;
         }
-        if (player.world.getLight(new BlockPos(player), true) < 4) {
+        if (player.world.getLight(new BlockPos(player).up((int) player.eyeHeight), true) < 4) {
             if (!player.isPotionActive(MobEffects.NIGHT_VISION)) {
                 value -= Mechanics.dark;
             }
